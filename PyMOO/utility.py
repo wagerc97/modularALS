@@ -2,10 +2,10 @@
 Script with utility functions for mySolver.py
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-import pandas as pd                                 # data handling
-#from pymoo.problems.multi import *                  # import multi objective problems
-from pymoo.optimize import minimize                 # minimize solution
-from pymoo.visualization.scatter import Scatter     # special pymoo plotter
+import pandas as pd  # data handling
+import numpy as np  # maths and stuff
+from pymoo.optimize import minimize  # minimize solution
+from pymoo.visualization.scatter import Scatter  # special pymoo plotter
 from pymoo.visualization.fitness_landscape import FitnessLandscape  # allows illustrating problems as landscape
 
 
@@ -14,9 +14,9 @@ from pymoo.visualization.fitness_landscape import FitnessLandscape  # allows ill
 # Instead of from pymoo.problems import get_problem use from pymoo.problems.multi import * .
 
 # And for get_problem use problem instead. As an example:
-#> get_problem("zdt1").pareto_front()
+# > get_problem("zdt1").pareto_front()
 # Should be converted to:
-#> ZDT1().pareto_front()
+# > ZDT1().pareto_front()
 
 ######################################
 
@@ -30,27 +30,25 @@ def showFitnessLandscape(problem):
     FitnessLandscape(problem, _type="contour", colorbar=True).show()
 
 
-def createProblem(prob):
+def createProblem(problemName):
     """
     Create a problem
-    :param prob: enter one { Zakharov/ZDT1, Rosenbrock }
+    :param problemName: enter one { Zakharov/ZDT1, Rosenbrock }
     :return: the problem object
     """
-    if prob.lower() in ("zakharov", "zdt1", "z"):
+    if problemName.lower() in ("zakharov", "zdt1", "z"):
         from pymoo.problems.multi import ZDT1
         # https://pymoo.org/problems/single/zakharov.html
         problem = ZDT1(n_var=2)
-        print("Problem is 'Zakharov'")
-    elif prob.lower() in ("rosenbrock", "r"):
+    elif problemName.lower() in ("rosenbrock", "r"):
         from pymoo.problems.single import Rosenbrock
         # https://pymoo.org/problems/single/rosenbrock.html
         problem = Rosenbrock(n_var=2)
-        print("Problem is 'Rosenbrock'")
-        showFitnessLandscape(problem)
+        #showFitnessLandscape(problem)
 
     else:
         raise Exception("Enter parameter { Zakharov, Rosenbrock }")
-
+    print(problem)
     return problem
 
 
@@ -62,7 +60,7 @@ def createAlgorithm(algo):
     """
     if algo.lower() == "nsga2" or "n":
         from pymoo.algorithms.moo.nsga2 import NSGA2
-        algorithm = NSGA2(pop_size=100) # pop_size defines the number of dots
+        algorithm = NSGA2(pop_size=100)  # pop_size defines the number of dots
 
     else:
         raise Exception("Enter parameter { NSGA2 }")
@@ -80,30 +78,30 @@ def mySolver(problem, algorithm, iterations):
     """
 
     # Define Result
-    #https://pymoo.org/interface/minimize.html
+    # https://pymoo.org/interface/minimize.html
     res = minimize(problem,
                    algorithm,
                    ('n_gen', iterations),  # n_gen defines the number of iterations
-                   verbose=True)   # prints out solution in each iteration
+                   verbose=True)  # prints out solution in each iteration
     return problem, res
 
 
 def summary(problem, res):
     """ Pretty print information about the solution of the result """
     NUM_SIGN = 80
-    print("\n" + "-"*31 + "[ RESULT SUMMARY ]" + "-"*31)
+    print("\n" + "-" * 31 + "[ RESULT SUMMARY ]" + "-" * 31)
 
     print(f"Elapsed time:\t{round(res.exec_time, 2)} seconds")
     print(f"Algorithm:\t\t{res.algorithm}")
-    print(f"Problem:\n{res.problem}")
+    print(f"Problem:\n{problem.name}")
     print(f"Result:\n{res}")
     print("")
 
     printResult = False
     if printResult:
         # Create DataFrames for decision variables and objectives and print them
-        X_df = pd.DataFrame(res.X, columns=[f"x{i+1}" for i in range(problem.n_var)])
-        F_df = pd.DataFrame(res.F, columns=[f"f{i+1}" for i in range(problem.n_obj)])
+        X_df = pd.DataFrame(res.X, columns=[f"x{i + 1}" for i in range(problem.n_var)])
+        F_df = pd.DataFrame(res.F, columns=[f"f{i + 1}" for i in range(problem.n_obj)])
         print("Decision variables:")
         print(X_df)
         print("\nObjectives:")
@@ -112,7 +110,7 @@ def summary(problem, res):
     if True:
         writeResultValuesToFile(res)
 
-    print("-"*NUM_SIGN)
+    print("-" * NUM_SIGN)
 
 
 def writeResultValuesToFile(res):
@@ -131,10 +129,54 @@ def plotResultWithPymoo(problem, res):
     :param res: the result object
     """
     plot = Scatter()
-    plot.add(problem.pareto_front(), # add line to indicate the pareto front
+    plot.add(problem.pareto_front(),  # add line to indicate the pareto front
              plot_type="line",
              color="black",
-             alpha=0.7)          # thickness
+             alpha=0.7)  # thickness
     plot.add(res.F,
              color="red")
     plot.show()
+
+
+def generateDataframe(n_rows, n_cols, x_lower, x_upper, seed=42):
+    """
+    Generate a dataframe with random numbers. Parameters define dimensions and boundaries.
+    :param n_rows: ROWS - df length
+    :param n_cols: COLS - number of columns
+    :param x_lower: lower bound
+    :param x_upper: upper bound
+    :param seed: random seed
+    :return: resulting dataframe
+    """
+    np.random.seed(seed)  # Set the random seed to 42
+    df_dict = {}  # dataframe dictionary will store the columns temporarily
+    for i in range(1, n_cols + 1):
+        print(f"randomly draw column: x{i}")
+        # Generate n random numbers between the specified lower and upper bounds using the uniform() function
+        x = np.random.uniform(low=x_lower, high=x_upper, size=n_rows)
+        # add new column to dataframe dictionary
+        df_dict[f'x{i}'] = x
+
+    df = pd.DataFrame(df_dict)  # convert dict to df
+    return df
+
+
+def createRandomInputValue(problem):
+    """ Handels parameters for input data and calls dataframe generator """
+    ROWS=10
+    print("ROWS:", ROWS)
+    LOWER=-2
+    print("LOWER:", ROWS)
+    UPPER=2
+    print("UPPER:", ROWS)
+    SEED=42
+    return generateDataframe(n_rows=ROWS,
+                             n_cols=problem.n_var,
+                             x_lower=LOWER,
+                             x_upper=UPPER,
+                             seed=SEED
+                             )
+
+
+def computeOutputValues(train_x, problem):
+    return None

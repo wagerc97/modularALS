@@ -14,7 +14,7 @@ import utility as util
 if __name__ == '__main__':
 
     # Define Problem
-    problem = util.createProblem(prob="rosenbrock")
+    problem = util.createProblem(problemName="rosenbrock")
     # SOO: Rosenbrock   (n_var: 2, n_obj: 1, n_constr: 0) -> solution is one single point
     # MOO: Zakharov     (n_var: 2, n_obj: 2, n_constr: 0) -> solution is pareto front in 2D
 
