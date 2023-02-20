@@ -28,4 +28,4 @@ if __name__ == '__main__':
     util.summary(problem, res)
 
     # Plot the result
-    util.plotResult(problem, res)
+    util.plotResultWithPymoo(problem, res)

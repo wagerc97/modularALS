@@ -1,6 +1,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Script with utility functions for mySolver.py
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+import os
 
 import pandas as pd  # data handling
 import numpy as np  # maths and stuff
@@ -26,8 +27,11 @@ def showFitnessLandscape(problem):
     Show problem as landscape
     Illustrate problem (only applicable if one single objective function)
     """
-    FitnessLandscape(problem, angle=(45, 45), _type="surface").show()
-    FitnessLandscape(problem, _type="contour", colorbar=True).show()
+    # 3D Surface model
+    # Note: using n_samples to decrease the quality and allow turning 3D model on weak PC
+    FitnessLandscape(problem, angle=(45, 45), _type="surface", n_samples=40).show()
+    # 2D Contour model
+    #FitnessLandscape(problem, _type="contour", colorbar=True).show()
 
 
 def createProblem(problemName):
@@ -44,7 +48,7 @@ def createProblem(problemName):
         from pymoo.problems.single import Rosenbrock
         # https://pymoo.org/problems/single/rosenbrock.html
         problem = Rosenbrock(n_var=2)
-        # showFitnessLandscape(problem)
+        showFitnessLandscape(problem)
 
     else:
         raise Exception("Enter parameter { Zakharov, Rosenbrock }")
@@ -123,7 +127,7 @@ def writeResultValuesToFile(res):
     print("well actually not yet -> todo: implement this stuff ")
 
 
-def plotResult(problem, res):
+def plotResultWithPymoo(problem, res):
     """
     Plot the result.
     :param problem: the problem object
@@ -173,48 +177,102 @@ def generateDataframe(n_rows, n_cols, x_lower, x_upper, seed=42):
     return df
 
 
-def createRandomInputValue(problem):
-    """ Handels parameters for input data according to problem. """
+def createRandomInputValue(problem, param_seed=42, N=10):
+    """ Handles parameters for input data according to problem. """
     # Standard df size
-    rows = 10
+    rows = N
     print("df rows:", rows)
-    seed = 42
+    seed = param_seed
     print("random seed:", seed)
 
     # Problem dependent parameters
-    if problem.name().lower() in "rosenbrock":
+    if problem.name() in "Rosenbrock":
         lower = -2
         upper = 2
-    elif problem.name().lower() in "zakharov":
-        lower = -2
-        upper = 2
+    elif problem.name() in "ZDT1":
+        lower = -10
+        upper = 10
     else:
         raise Exception("not implemented yet ")
 
     print("lower boundary:", lower)
     print("upper boundary:", upper)
-    return generateDataframe(n_rows=rows,
-                             n_cols=problem.n_var,
-                             x_lower=lower,
-                             x_upper=upper,
-                             seed=seed
-                             )
+    return generateDataframe(n_rows=rows, n_cols=problem.n_var,
+                             x_lower=lower, x_upper=upper, seed=seed)
 
 
 def computeOutputValues(train_x, problem):
-    df = train_x.copy()
-    df = df.reset_index()  # make sure indexes pair with number of rows
-    col_names = df.columns
+    df = train_x.copy()     # always work on copy of df not to change original
 
-    for index, row in df.iterrows():
-        #print(row['x1'], row['x2'])
-        print(row)
+    def evaluate_df_row(x):
+        """
+        Define a function to evaluate the problem for each row of the dataframe
+        :param x: <class 'numpy.ndarray'>
+        """
+        return problem.evaluate(x)
 
-    labels = []  # list for labels
-    #for x in df:
-    #    print("x:", x)
-        #y = problem(x)
-        #print(y)
-        #labels.append(y)
+    # Apply the evaluate_df_row function to each row of the dataframe
+    results = np.apply_along_axis(evaluate_df_row, axis=1, arr=df.values)
 
-    return labels
+    return results
+
+
+def concatenateDataframes(x, y):
+    """ Merge Dataframes """
+    x_df = pd.DataFrame(x)
+    #TODO: implement method to define Y column names
+    y_df = pd.DataFrame(y, columns=["y"])
+    frames = [x_df, y_df]
+    combined_df = pd.concat(frames, axis=1)
+    return combined_df
+
+
+def storeDfInCsvFile(df):
+    """
+    Store df in csv file.
+    :param df: combined dataframe
+    :return:
+    """
+    dirPath = "../data"
+    fileName = "/data"
+    fullPath = dirPath+fileName+".csv"
+    os.makedirs(dirPath, exist_ok=True)  # Make sure the directory exists
+
+    # write df to new csv file and delete old content
+    df.to_csv(fullPath, encoding='utf-8',
+              index=False,  # False: without index
+              sep=";"       # custom seperator
+              )
+    print("Successfully stored df to location:", fullPath)
+    return None
+
+
+def plotResult(df):
+    from mpl_toolkits.mplot3d import Axes3D
+
+    # Extract the x and y data from the dataframe
+    if 'x2' in df.columns:
+        x1 = df['x1']
+        x2 = df['x2']
+        y = df['y']
+    else:
+        x1 = df.iloc[:, :-1]
+        y = df.iloc[:, -1]
+
+    # Create the plot
+    if 'x2' in df.columns:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(x1, x2, y)
+        ax.set_xlabel('x1')
+        ax.set_ylabel('x2')
+        ax.set_zlabel('y')
+    else:
+        fig, ax = plt.subplots()
+        ax.plot(x1, y)
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+
+    plt.show()
+    return None
+
