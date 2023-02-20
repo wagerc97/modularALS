@@ -1,10 +1,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Compute and store X-Y value pairs from different problems. 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 import utility as util
-
 
 if __name__ == '__main__':
 
@@ -22,7 +19,7 @@ if __name__ == '__main__':
 
     # Compute according output values
     train_y = util.computeOutputValues(train_x, problem)
-    print("\nNew Dataframe for Y:\n", train_x)
+    print("\nNew Dataframe for Y:\n", train_y)
 
     # Plot random values
     # ... function()

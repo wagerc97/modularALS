@@ -22,10 +22,10 @@ if __name__ == '__main__':
     algorithm = util.createAlgorithm(algo="nsga2")
 
     # Start the solver
-    problem, res = util.mySolver(problem, algorithm, iterations=50)
+    problem, res = util.solver(problem, algorithm, iterations=50)
 
     # Pretty print the solution
     util.summary(problem, res)
 
     # Plot the result
-    util.plotResultWithPymoo(problem, res)
+    util.plotResult(problem, res)

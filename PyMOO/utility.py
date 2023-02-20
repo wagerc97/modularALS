@@ -4,10 +4,11 @@ Script with utility functions for mySolver.py
 
 import pandas as pd  # data handling
 import numpy as np  # maths and stuff
+import matplotlib.pyplot as plt     # plot stuff
 from pymoo.optimize import minimize  # minimize solution
 from pymoo.visualization.scatter import Scatter  # special pymoo plotter
 from pymoo.visualization.fitness_landscape import FitnessLandscape  # allows illustrating problems as landscape
-import MyCallback
+#import MyCallback
 
 #### Common error with tutorial ####
 # Error: Import error of get_problem
@@ -19,7 +20,6 @@ import MyCallback
 # > ZDT1().pareto_front()
 
 ######################################
-
 
 def showFitnessLandscape(problem):
     """
@@ -68,7 +68,7 @@ def createAlgorithm(algo):
     return algorithm
 
 
-def mySolver(problem, algorithm, iterations):
+def solver(problem, algorithm, iterations):
     """
     Create and solve a problem with a chosen algorithm
     :param problem: input problem
@@ -76,14 +76,12 @@ def mySolver(problem, algorithm, iterations):
     :param iterations: number of steps towards optimal solution
     :return:
     """
-    newMyCallback = MyCallback()
     # Define Result
     # https://pymoo.org/interface/minimize.html
     res = minimize(problem,
                    algorithm,
                    ('n_gen', iterations),  # n_gen defines the number of iterations
-                   verbose=True,  # prints out solution in each iteration
-                    callback=newMyCallback
+                   verbose=True  # prints out solution in each iteration
                    )
     return problem, res
 
@@ -95,8 +93,8 @@ def summary(problem, res):
 
     print(f"Elapsed time:\t{round(res.exec_time, 2)} seconds")
     print(f"Algorithm:\t\t{res.algorithm}")
-    print(f"Problem:\n{problem.name}")
-    print(f"Result:\n{res}")
+    print(f"Problem:\t\t{problem.name()}")
+    print(f"Result:\t\t{res}")
     print("")
 
     printResult = False
@@ -122,9 +120,10 @@ def writeResultValuesToFile(res):
     :return:
     """
     print("writing result values to file...")
+    print("well actually not yet -> todo: implement this stuff ")
 
 
-def plotResultWithPymoo(problem, res):
+def plotResult(problem, res):
     """
     Plot the result.
     :param problem: the problem object
@@ -138,6 +137,17 @@ def plotResultWithPymoo(problem, res):
     plot.add(res.F,
              color="red")
     plot.show()
+
+
+def plotOptimization(problem, res):
+    """
+    Plot the result.
+    :param problem: the problem object
+    :param res: the result object
+    """
+    val = res.algorithm
+    plt.plot(np.arange(len(val)), val)
+    plt.show()
 
 
 def generateDataframe(n_rows, n_cols, x_lower, x_upper, seed=42):
@@ -192,9 +202,19 @@ def createRandomInputValue(problem):
 
 
 def computeOutputValues(train_x, problem):
+    df = train_x.copy()
+    df = df.reset_index()  # make sure indexes pair with number of rows
+    col_names = df.columns
+
+    for index, row in df.iterrows():
+        #print(row['x1'], row['x2'])
+        print(row)
+
     labels = []  # list for labels
-    for x in train_x:
-        y = problem(x)
-        print(y)
-        labels.append(y)
+    #for x in df:
+    #    print("x:", x)
+        #y = problem(x)
+        #print(y)
+        #labels.append(y)
+
     return labels
