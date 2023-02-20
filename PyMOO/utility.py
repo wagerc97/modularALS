@@ -7,7 +7,7 @@ import numpy as np  # maths and stuff
 from pymoo.optimize import minimize  # minimize solution
 from pymoo.visualization.scatter import Scatter  # special pymoo plotter
 from pymoo.visualization.fitness_landscape import FitnessLandscape  # allows illustrating problems as landscape
-
+import MyCallback
 
 #### Common error with tutorial ####
 # Error: Import error of get_problem
@@ -44,7 +44,7 @@ def createProblem(problemName):
         from pymoo.problems.single import Rosenbrock
         # https://pymoo.org/problems/single/rosenbrock.html
         problem = Rosenbrock(n_var=2)
-        #showFitnessLandscape(problem)
+        # showFitnessLandscape(problem)
 
     else:
         raise Exception("Enter parameter { Zakharov, Rosenbrock }")
@@ -76,13 +76,15 @@ def mySolver(problem, algorithm, iterations):
     :param iterations: number of steps towards optimal solution
     :return:
     """
-
+    newMyCallback = MyCallback()
     # Define Result
     # https://pymoo.org/interface/minimize.html
     res = minimize(problem,
                    algorithm,
                    ('n_gen', iterations),  # n_gen defines the number of iterations
-                   verbose=True)  # prints out solution in each iteration
+                   verbose=True,  # prints out solution in each iteration
+                    callback=newMyCallback
+                   )
     return problem, res
 
 
@@ -162,21 +164,37 @@ def generateDataframe(n_rows, n_cols, x_lower, x_upper, seed=42):
 
 
 def createRandomInputValue(problem):
-    """ Handels parameters for input data and calls dataframe generator """
-    ROWS=10
-    print("ROWS:", ROWS)
-    LOWER=-2
-    print("LOWER:", ROWS)
-    UPPER=2
-    print("UPPER:", ROWS)
-    SEED=42
-    return generateDataframe(n_rows=ROWS,
+    """ Handels parameters for input data according to problem. """
+    # Standard df size
+    rows = 10
+    print("df rows:", rows)
+    seed = 42
+    print("random seed:", seed)
+
+    # Problem dependent parameters
+    if problem.name().lower() in "rosenbrock":
+        lower = -2
+        upper = 2
+    elif problem.name().lower() in "zakharov":
+        lower = -2
+        upper = 2
+    else:
+        raise Exception("not implemented yet ")
+
+    print("lower boundary:", lower)
+    print("upper boundary:", upper)
+    return generateDataframe(n_rows=rows,
                              n_cols=problem.n_var,
-                             x_lower=LOWER,
-                             x_upper=UPPER,
-                             seed=SEED
+                             x_lower=lower,
+                             x_upper=upper,
+                             seed=seed
                              )
 
 
 def computeOutputValues(train_x, problem):
-    return None
+    labels = []  # list for labels
+    for x in train_x:
+        y = problem(x)
+        print(y)
+        labels.append(y)
+    return labels

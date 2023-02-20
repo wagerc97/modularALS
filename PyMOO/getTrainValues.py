@@ -18,10 +18,11 @@ if __name__ == '__main__':
 
     # Define random input values
     train_x = util.createRandomInputValue(problem)
-    print("New Dataframe:\n", train_x)
+    print("\nNew Dataframe for X:\n", train_x)
 
     # Compute according output values
     train_y = util.computeOutputValues(train_x, problem)
+    print("\nNew Dataframe for Y:\n", train_x)
 
     # Plot random values
     # ... function()
