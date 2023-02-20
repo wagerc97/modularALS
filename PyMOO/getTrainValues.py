@@ -1,11 +1,6 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Example Usage from PyMOO documentation:
-- We refer here to our documentation for all the details. However, for instance, executing NSGA2:
-- The Zakharov function is a multi-objective optimization problem commonly used to test the performance of optimization 
-  algorithms.
+Compute and store X-Y value pairs from different problems. 
 
-Note: 
-- this project uses its own Python 3.10 interpreter
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 import utility as util

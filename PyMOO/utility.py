@@ -9,8 +9,23 @@ from pymoo.visualization.scatter import Scatter     # special pymoo plotter
 from pymoo.visualization.fitness_landscape import FitnessLandscape  # allows illustrating problems as landscape
 
 
+#### Common error with tutorial ####
+# Error: Import error of get_problem
+# Instead of from pymoo.problems import get_problem use from pymoo.problems.multi import * .
+
+# And for get_problem use problem instead. As an example:
+#> get_problem("zdt1").pareto_front()
+# Should be converted to:
+#> ZDT1().pareto_front()
+
+######################################
+
+
 def showFitnessLandscape(problem):
-    """ Show problem as landscape """
+    """
+    Show problem as landscape
+    Illustrate problem (only applicable if one single objective function)
+    """
     FitnessLandscape(problem, angle=(45, 45), _type="surface").show()
     FitnessLandscape(problem, _type="contour", colorbar=True).show()
 
@@ -65,6 +80,7 @@ def mySolver(problem, algorithm, iterations):
     """
 
     # Define Result
+    #https://pymoo.org/interface/minimize.html
     res = minimize(problem,
                    algorithm,
                    ('n_gen', iterations),  # n_gen defines the number of iterations
@@ -93,7 +109,19 @@ def summary(problem, res):
         print("\nObjectives:")
         print(F_df)
 
+    if True:
+        writeResultValuesToFile(res)
+
     print("-"*NUM_SIGN)
+
+
+def writeResultValuesToFile(res):
+    """
+    Writes design space values (res.X aka X) and objective space values (res.F aka Y) to a csv file
+    :param res:
+    :return:
+    """
+    print("writing result values to file...")
 
 
 def plotResultWithPymoo(problem, res):
@@ -110,4 +138,3 @@ def plotResultWithPymoo(problem, res):
     plot.add(res.F,
              color="red")
     plot.show()
-
