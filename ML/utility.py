@@ -23,6 +23,7 @@ def mlSetup():
     mpl.rc('axes', labelsize=14)
     mpl.rc('xtick', labelsize=12)
     mpl.rc('ytick', labelsize=12)
+    print("-"*60, "\n")
     return None
 
 def save_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
@@ -38,20 +39,43 @@ def save_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
     plt.savefig(path, format=fig_extension, dpi=resolution)
 
 
-def defineNormalEquation():
+def defineNormalEquation(verbose=False, n=100):
     """ Defines a normal equation with n=100 """
-    X = 2 * np.random.rand(100, 1)
-    y = 4 + 3 * X + np.random.randn(100, 1)
-    print("X:\n", pd.DataFrame(X))
-    print("y:\n", pd.DataFrame(y))
+    X = 2 * np.random.rand(n, 1)
+    y = 4 + 3 * X + np.random.randn(n, 1)
+    # convert dataframe
+    X = pd.DataFrame(X, columns=["X"])
+    y = pd.DataFrame(y, columns=["y"])
+    if verbose:
+        print("X:\n", X)
+        print("y:\n", y)
     return X, y
 
 
-def plotNormalEquation(X, y):
-    plt.figure(figsize=(5, 3))
+def computeAnalyticalSolution(X, y):
+    """
+    Compute theta which minimizes the loss function.
+    Note: Column-wise concatenation using np.c_
+    :param X:
+    :param y:
+    :return:
+    """
+    # add x0 = 1 to each instance in a new column
+    X_b = np.c_[np.ones((100, 1)), X]
+    # Compute the (multiplicative) inverse of a matrix
+    theta_best = np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
+    return theta_best
+
+
+def plot1D(X, y, saveFileWithName=None):
+    plt.figure(figsize=(9, 6))
     plt.plot(X, y, "b.")
     plt.xlabel("$x_1$", fontsize=18)
     plt.ylabel("$y$", rotation=0, fontsize=18)
-    plt.axis([0, 2, 0, 15])  # crop plot window
-    #save_fig("generated_data_plot")
+    plt.axis([0, 2,     # x-axis
+              0, 15])   # y-axis
+    if saveFileWithName:
+        save_fig(saveFileWithName)
     plt.show()
+
+
