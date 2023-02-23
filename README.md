@@ -1,0 +1,3 @@
+# Optimization
+
+![](/images/rosenbrock.gif)
