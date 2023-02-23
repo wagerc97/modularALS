@@ -99,7 +99,8 @@ def readDataFromCsvToDf(filepath=os.path.join("..", "data", "data.csv"), verbose
 
 def plotData(df):
     # Extract the x and y data from the dataframe
-    if 'x2' in df.columns:
+    #if 'x2' in df.columns:
+    if len(df.columns) > 2:
         x1 = df['x1']
         x2 = df['x2']
         y = df['y']
@@ -108,7 +109,8 @@ def plotData(df):
         y = df.iloc[:, -1]
 
     # Create the plot
-    if 'x2' in df.columns:
+    #if 'x2' in df.columns:
+    if len(df.columns) > 2:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
         ax.scatter(x1, x2, y)
@@ -123,4 +125,57 @@ def plotData(df):
 
     plt.show()
     return None
+
+
+def simplifyTable(ptable):
+    print("\nNumber of columns in table:", len(ptable))
+    pd.set_option('display.max_columns', None)
+    return ptable.drop(ptable.filter(regex='time|split|params|std_|param_').columns, axis=1).sort_values("rank_test_score").head()
+
+
+def GridSearchCvForKrr(pipeline_krr, score, X_train, y_train):
+    from sklearn.model_selection import GridSearchCV
+
+    # Exhaustively search for best hyperparameters with GridSearchCV
+    model_krr = GridSearchCV(
+        estimator=pipeline_krr,  # fresh estimator
+        param_grid=[{  # hyperparameters
+            "ridge__alpha": [0.001, 0.01, 0.1, 1],  # regularization strength, reduces variance of estimates, alpha=1/2C
+            "ridge__gamma": [0.001, 0.01, 0.03, 0.05, 0.1],  #
+            "ridge__kernel": ["rbf"]
+        }],
+        n_jobs=-1,  # jobs to run in parallel (-1 uses all processes available)
+        scoring=score,  # using a callable to score each model
+        cv=5  # k-fold cross validation
+    )
+
+    # fit the newly established model with data
+    model_krr.fit(X_train, y_train)
+
+    # table of k cross validation results
+    table_krr = pd.DataFrame(model_krr.cv_results_)
+    #table_krr.sort_values("rank_test_score").head()
+    print(simplifyTable(table_krr))
+
+    return model_krr
+
+
+def splitData(df):
+    from sklearn.model_selection import train_test_split
+
+    # Data split
+    data_train, data_test = train_test_split(df.copy(), test_size=0.2, random_state=42)
+    # assign X all columns except "y" (which we want to predict)
+    # assign y the "y" column
+    X_train, y_train = data_train.drop(["y"], axis=1), data_train.y
+    X_test, y_test = data_test.drop(["y"], axis=1), data_test.y
+    return X_train, y_train, X_test, y_test
+
+
+def concatenateDataframes(x_df, y):
+    """ Merge 2 Dataframes to one single df """
+    y_df = pd.DataFrame(y)  # predict() only returns numpy.ndarray
+    frames = [x_df, y_df]
+    combined_df = pd.concat(frames, axis=1)
+    return combined_df
 

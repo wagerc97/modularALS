@@ -6,7 +6,7 @@ import pandas as pd
 import utility as util
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.linear_model import LinearRegression, Lasso, Ridge, SGDRegressor
 from sklearn.metrics import accuracy_score
 
 
@@ -41,6 +41,8 @@ class MachineLearningModel:
             self.model = Lasso(**kwargs)
         elif model_type == 'ridge':
             self.model = Ridge(**kwargs)
+        elif model_type == 'elastic_net':
+            self.model = SGDRegressor(**kwargs)
         else:
             raise ValueError(f'Invalid model type: {model_type}')
 
