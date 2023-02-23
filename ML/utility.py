@@ -41,6 +41,8 @@ def save_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
 
 def defineNormalEquation(verbose=False, n=100):
     """ Defines a normal equation with n=100 """
+    print("Defining Normal Equation with n =", n)
+    np.random.seed(42)  # Set the random seed to 42
     X = 2 * np.random.rand(n, 1)
     y = 4 + 3 * X + np.random.randn(n, 1)
     # convert dataframe
@@ -52,16 +54,17 @@ def defineNormalEquation(verbose=False, n=100):
     return X, y
 
 
-def computeAnalyticalSolution(X, y):
+def computeAnalyticalSolution(X, y, n=100):
     """
     Compute theta which minimizes the loss function.
     Note: Column-wise concatenation using np.c_
+    :param n:
     :param X:
     :param y:
     :return:
     """
     # add x0 = 1 to each instance in a new column
-    X_b = np.c_[np.ones((100, 1)), X]
+    X_b = np.c_[np.ones((n, 1)), X]
     # Compute the (multiplicative) inverse of a matrix
     theta_best = np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
     return theta_best

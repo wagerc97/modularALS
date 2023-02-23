@@ -16,10 +16,10 @@ class MachineLearningModel:
         A class for building and training machine learning models using scikit-learn.
 
         :param model_type: The type of machine learning model to build. Currently, only linear regression is supported.
+        Implemented: [linear_regression, lasso, ridge]
         :type model_type: str
         :param normalize: Whether to normalize the input features before training the model. Default is False.
         :type normalize: bool
-        :param **kwargs: Additional keyword arguments to pass to the scikit-learn estimator.
 
         Example usage:
         >> model = MachineLearningModel('linear_regression', normalize=True)
@@ -88,16 +88,13 @@ class MachineLearningModel:
 
     def plotPrediction(self, y_predict):
         # Fancy plot
-        X_new = np.array( [ [0],
-                            [2] ] )    # TODO: what is X_new?
-        X_new = np.linspace(start=0, stop=2, num=len(y_predict))
-
         plt.figure(figsize=(9, 6))
-        plt.plot(X_new, y_predict, "r-", linewidth=2, label="Predictions")
+        plt.plot(self.X_train, y_predict, "r-", linewidth=2, label="Predictions")
         plt.plot(self.X_train, self.y_train, "b.")
         plt.xlabel("$x_1$", fontsize=18)
         plt.ylabel("$y$", rotation=0, fontsize=18)
         plt.legend(loc="upper left", fontsize=14)
+        plt.title(f"Model: {self.model.__class__.__name__}")
         plt.axis([0, 2, 0, 15])
         util.save_fig("linear_model_predictions_plot")
         plt.show()

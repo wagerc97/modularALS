@@ -1,6 +1,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Wrapper to build several ml models with easy interface
 
+Example use case with normal equation
 Source: https://www.kaggle.com/code/wagerc97/aml-regression
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -21,7 +22,6 @@ if __name__ == '__main__':
     X, y = util.defineNormalEquation(verbose=False)
 
     # Plot these input and output values
-    # todo: some weird error with matplotlib
     #util.plot1D(X, y, saveFileWithName="generated_data_plot")
 
     # Compute analytical solution
@@ -29,13 +29,13 @@ if __name__ == '__main__':
     print("theta_best:\n", theta_best)
 
     # Create a model of choice
-    myModel = MachineLearningModel('linear_regression', normalize=False)
+    myModel = MachineLearningModel('ridge', normalize=False)
     print(myModel)
 
     # Train model
     myModel.train(X_train=X, y_train=y)
 
-    # Print trained parameters
+    # Print trained parameters (intercept and coefficient)
     myModel.printTrainedParameters()
 
     # Use analytical solution theta to predict best result
