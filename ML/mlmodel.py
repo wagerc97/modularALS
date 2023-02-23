@@ -17,8 +17,8 @@ if __name__ == '__main__':
     # Set up ML model environment
     util.mlSetup()
 
-    # Define equation and get X, y
-    X, y = util.defineNormalEquation(verbose=False)
+    # Read data from csv
+    util.readDataFromCsvToDf()
 
     # Plot these input and output values
     # todo: some weird error with matplotlib

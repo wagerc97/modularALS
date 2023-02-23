@@ -82,3 +82,8 @@ def plot1D(X, y, saveFileWithName=None):
     plt.show()
 
 
+def readDataFromCsvToDf(filepath=os.path.join("..", "data", "data.csv")):
+    print("csv filepath:", filepath)
+    data = pd.read_csv(filepath)
+    print(data, sep=';')
+    return None

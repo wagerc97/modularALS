@@ -213,16 +213,14 @@ def computeOutputValues(train_x, problem):
 
     # Apply the evaluate_df_row function to each row of the dataframe
     results = np.apply_along_axis(evaluate_df_row, axis=1, arr=df.values)
-
-    return results
+    results_df = pd.DataFrame(results, columns=["y"])
+    return results_df
 
 
 def concatenateDataframes(x, y):
     """ Merge Dataframes """
     x_df = pd.DataFrame(x)
-    #TODO: implement method to define Y column names
-    y_df = pd.DataFrame(y, columns=["y"])
-    frames = [x_df, y_df]
+    frames = [x_df, y]
     combined_df = pd.concat(frames, axis=1)
     return combined_df
 
@@ -234,8 +232,10 @@ def storeDfInCsvFile(df):
     :return:
     """
     dirPath = "../data"
-    fileName = "/data"
-    fullPath = dirPath+fileName+".csv"
+    fileName = "data.csv"
+    #fullPath = dirPath+fileName+".csv"
+    fullPath = os.path.join(dirPath, fileName)
+    print("fullPath",fullPath)
     os.makedirs(dirPath, exist_ok=True)  # Make sure the directory exists
 
     # write df to new csv file and delete old content
