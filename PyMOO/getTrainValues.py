@@ -22,16 +22,16 @@ if __name__ == '__main__':
 
     # Compute according output values
     train_y = util.computeOutputValues(train_x, problem)
-    print("\nY:\n", train_y)
+    print("\ny:\n", train_y)
 
     # Merge Dataframes
     df = util.concatenateDataframes(train_x, train_y)
     print("\nCombined df:\n", df)
 
     # Store df in csv file
-    util.storeDfInCsvFile(df)
+    util.storeDfInCsvFile(df, problem)
 
     # Plot random values
-    util.plotResult(df)
+    util.plotData(df)
 
 

@@ -13,20 +13,23 @@ from machineLearningModel import MachineLearningModel
 
 
 if __name__ == '__main__':
+    # Check system requirements
+    #util.assertRequirements()
 
     # Set up ML model environment
     util.mlSetup()
 
-    # Read data from csv
-    util.readDataFromCsvToDf()
+    # Read data from csv to new df
+    data, problem_name = util.readDataFromCsvToDf(verbose=False)
+    df = data.copy()    # copy data immediately
 
-    # Plot these input and output values
-    # todo: some weird error with matplotlib
-    #util.plot1D(X, y, saveFileWithName="generated_data_plot")
+    X = df.iloc[:, :(len(df.columns)-1)]    # get every column except the last
+    print("X:\n", X)
+    y = df.iloc[:, :-1]  # get last column
+    print("y:\n", y)
 
-    # Compute analytical solution
-    theta_best = util.computeAnalyticalSolution(X,y)
-    print("theta_best:\n", theta_best)
+    # Plot data
+    util.plotData(df)
 
     # Create a model of choice
     myModel = MachineLearningModel('linear_regression', normalize=False)
@@ -46,6 +49,9 @@ if __name__ == '__main__':
 
     # Get intercept and coefficients of trained model
     trainedParams = myModel.getTrainedParameters()
+
+    # Compute analytical solution
+    #...
 
     # Assess deviation of prediction to true data
     # Question: Should we measure the accuracy or should we compare theta?

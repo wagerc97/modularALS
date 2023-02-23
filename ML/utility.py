@@ -2,21 +2,21 @@
 Script with utility functions for mlmodel.py
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import os
+import sys
+import sklearn
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
-
-import sys
-print("Python version:", sys.version)
-assert sys.version_info >= (3,5)
-
-print("Matplotlib version:", mpl._get_version())
-#assert mpl.version?
 import matplotlib.pyplot as plt
 
-import sklearn
-print("sklearn version:", sklearn.__version__)
-assert sklearn.__version__ >= "0.20"
+
+def assertRequirements():
+    print("Python version:", sys.version)
+    assert sys.version_info >= (3, 5)
+    #assert mpl.version?
+    print("Matplotlib version:", mpl._get_version())
+    print("sklearn version:", sklearn.__version__)
+    assert sklearn.__version__ >= "0.20"
 
 def mlSetup():
     # Matplot settings
@@ -38,7 +38,6 @@ def save_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
         plt.tight_layout()
     plt.savefig(path, format=fig_extension, dpi=resolution)
 
-
 def defineNormalEquation(verbose=False, n=100):
     """ Defines a normal equation with n=100 """
     print("Defining Normal Equation with n =", n)
@@ -52,7 +51,6 @@ def defineNormalEquation(verbose=False, n=100):
         print("X:\n", X)
         print("y:\n", y)
     return X, y
-
 
 def computeAnalyticalSolution(X, y, n=100):
     """
@@ -69,7 +67,6 @@ def computeAnalyticalSolution(X, y, n=100):
     theta_best = np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
     return theta_best
 
-
 def plot1D(X, y, saveFileWithName=None):
     plt.figure(figsize=(9, 6))
     plt.plot(X, y, "b.")
@@ -81,9 +78,49 @@ def plot1D(X, y, saveFileWithName=None):
         save_fig(saveFileWithName)
     plt.show()
 
+def readDataFromCsvToDf(filepath=os.path.join("..", "data", "data.csv"), verbose=False):
+    """
+    Read in data training data from csv-file and store it in dataframe.
+    :param filepath:
+    :return: dataframe holding training data + problem name
+    """
+    # get data
+    data = pd.read_csv(filepath, sep=';', header=1)
+    # get problem name from first line
+    import csv
+    with open(filepath, "r", newline='\n') as f:
+        reader = csv.reader(f)
+        problem_name = next(reader)[0]
+    print("Found data for problem:", problem_name)
+    if verbose:
+        print("csv filepath:", filepath)
+        print(data)
+    return data, problem_name
 
-def readDataFromCsvToDf(filepath=os.path.join("..", "data", "data.csv")):
-    print("csv filepath:", filepath)
-    data = pd.read_csv(filepath)
-    print(data, sep=';')
+def plotData(df):
+    # Extract the x and y data from the dataframe
+    if 'x2' in df.columns:
+        x1 = df['x1']
+        x2 = df['x2']
+        y = df['y']
+    else:
+        x1 = df.iloc[:, :-1]
+        y = df.iloc[:, -1]
+
+    # Create the plot
+    if 'x2' in df.columns:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(x1, x2, y)
+        ax.set_xlabel('x1')
+        ax.set_ylabel('x2')
+        ax.set_zlabel('y')
+    else:
+        fig, ax = plt.subplots()
+        ax.plot(x1, y)
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+
+    plt.show()
     return None
+

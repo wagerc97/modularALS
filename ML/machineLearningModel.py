@@ -34,6 +34,7 @@ class MachineLearningModel:
         self.X_train = None
         self.y_train = None
 
+        # Create model from input parameter
         if model_type == 'linear_regression':
             self.model = LinearRegression(**kwargs)
         elif model_type == 'lasso':

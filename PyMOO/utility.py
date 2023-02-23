@@ -202,6 +202,12 @@ def createRandomInputValue(problem, param_seed=42, N=10):
 
 
 def computeOutputValues(train_x, problem):
+    """
+    Use pymoo problem to compute y for labels.
+    :param train_x: input values in X
+    :param problem: type of pymoo problem
+    :return:
+    """
     df = train_x.copy()     # always work on copy of df not to change original
 
     def evaluate_df_row(x):
@@ -225,13 +231,13 @@ def concatenateDataframes(x, y):
     return combined_df
 
 
-def storeDfInCsvFile(df):
+def storeDfInCsvFile(df, problem):
     """
     Store df in csv file.
     :param df: combined dataframe
     :return:
     """
-    dirPath = "../data"
+    dirPath = os.path.join("..","data")
     fileName = "data.csv"
     #fullPath = dirPath+fileName+".csv"
     fullPath = os.path.join(dirPath, fileName)
@@ -243,13 +249,17 @@ def storeDfInCsvFile(df):
               index=False,  # False: without index
               sep=";"       # custom seperator
               )
-    print("Successfully stored df to location:", fullPath)
+    # add problem name in first line
+    with open(fullPath, "r+") as f:
+        file_data = f.read()
+        f.seek(0,0)     # get the first line
+        f.write(str(problem.name()) + '\n' + file_data)
+
+    print(f"Successfully stored {problem.name()}-data to location:", fullPath)
     return None
 
 
-def plotResult(df):
-    from mpl_toolkits.mplot3d import Axes3D
-
+def plotData(df):
     # Extract the x and y data from the dataframe
     if 'x2' in df.columns:
         x1 = df['x1']
