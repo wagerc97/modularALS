@@ -11,7 +11,7 @@ if __name__ == '__main__':
     # - MOO: Zakharov   (x1, x2, y1, y2) (n_var: 2, n_obj: 2, n_constr: 0) -> solution is pareto front in 2D
     PROBLEM_NAME = "Rosenbrock"
     SEED = 42
-    N = 100
+    N = 300
 
     # Define Problem
     problem = util.createProblem(problemName=PROBLEM_NAME)

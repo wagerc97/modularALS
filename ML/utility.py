@@ -99,7 +99,6 @@ def readDataFromCsvToDf(filepath=os.path.join("..", "data", "data.csv"), verbose
 
 def plotData(df, title=""):
     # Extract the x and y data from the dataframe
-    #if 'x2' in df.columns:
     if len(df.columns) > 2:
         x1 = df[df.columns[0]]
         x2 = df[df.columns[1]]
@@ -109,7 +108,6 @@ def plotData(df, title=""):
     y = df[df.columns[-1]]
 
     # Create the plot
-    #if 'x2' in df.columns:
     if len(df.columns) > 2:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -133,7 +131,7 @@ def simplifyTable(ptable):
     return ptable.drop(ptable.filter(regex='time|split|params|std_|param_').columns, axis=1).sort_values("rank_test_score").head()
 
 
-def GridSearchCvForKrr(pipeline_krr, score, X_train, y_train):
+def GridSearchCvForKrr(pipeline_krr, score, X_train, y_train, X_test, y_test):
     from sklearn.model_selection import GridSearchCV
 
     # Exhaustively search for best hyperparameters with GridSearchCV
@@ -150,14 +148,16 @@ def GridSearchCvForKrr(pipeline_krr, score, X_train, y_train):
     )
 
     # fit the newly established model with data
-    model_krr.fit(X_train, y_train)
+    #model_krr.fit(X_train, y_train)
+    from sklearn.model_selection import cross_val_score
+    scores = cross_val_score(model_krr.fit(X_train, y_train), X_test, y_test)
 
     # table of k cross validation results
     table_krr = pd.DataFrame(model_krr.cv_results_)
     #table_krr.sort_values("rank_test_score").head()
     print(simplifyTable(table_krr))
 
-    return model_krr
+    return model_krr, scores
 
 
 def splitData(df):
@@ -209,6 +209,57 @@ def createPipeline(normalize=False):
         ("scale", StandardScaler()),
         ("ridge", KernelRidge(kernel="rbf"))
     ])
-
-
     return pipeline_krr
+
+
+def defineScore():
+    # In sklearn ist ein höherer Score immer besser. Der mean_absolute_error (MAE) ist aber besser, je kleiner er ist.
+    # Wenn wir den Scorer erstellen nehmen wir also - mean_absoute_error als Bewertungsmaß. Dazu setzten wir greater_is_better=False.
+    # Dementsprechend werden die Scores im Grid Search auch negativ sein und der Score, der am nähesten zu 0 ist der beste.
+
+    from sklearn.metrics import make_scorer, mean_absolute_error
+    # It takes a score function, such as
+    # ~sklearn.metrics.accuracy_score,
+    # ~sklearn.metrics.mean_squared_error,
+    # ~sklearn.metrics.adjusted_rand_score or
+    # ~sklearn.metrics.average_precision_score and returns a callable that ...
+
+    # Score for KRR -> MAE
+    score = make_scorer(mean_absolute_error, greater_is_better=False)
+    return score
+
+
+def plotPredictionAndData(pred_df, train_df, title):
+    # Check dimensionality of data
+    if len(train_df.columns) > 2: # 2D
+        # define figure shape
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        for df, color, label in (pred_df, "red", "Prediction"), (train_df, "blue", "Train"):
+            # Extract the x and y data from the dataframe
+            x1 = df[df.columns[0]]
+            x2 = df[df.columns[1]]
+            y = df[df.columns[-1]]
+            # plot x,y
+            ax.scatter(x1, x2, y, color=color, label=label)
+            ax.set_xlabel('x1')
+            ax.set_ylabel('x2')
+            ax.set_zlabel('y')
+
+    else: # 1D
+        # define figure shape
+        fig, ax = plt.subplots()
+        for df, color, label in (pred_df, "red", "Prediction"), (train_df, "blue", "Train"):
+            # Extract the x and y data from the dataframe
+            x1 = df[df.columns[0]]
+            y = df[df.columns[-1]]
+            # plot x,y
+            ax.plot(x1, y, color=color)
+            ax.set_xlabel('x')
+            ax.set_ylabel('y')
+
+    plt.title(title)
+    ax.legend()
+    plt.show()
+    return None
+
