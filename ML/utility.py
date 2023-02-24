@@ -97,16 +97,16 @@ def readDataFromCsvToDf(filepath=os.path.join("..", "data", "data.csv"), verbose
         print(data)
     return data, problem_name
 
-def plotData(df):
+def plotData(df, title=""):
     # Extract the x and y data from the dataframe
     #if 'x2' in df.columns:
     if len(df.columns) > 2:
-        x1 = df['x1']
-        x2 = df['x2']
-        y = df['y']
+        x1 = df[df.columns[0]]
+        x2 = df[df.columns[1]]
     else:
-        x1 = df.iloc[:, :-1]
-        y = df.iloc[:, -1]
+        #x1 = df.iloc[:, :-1]
+        x1 = df[df.columns[0]]
+    y = df[df.columns[-1]]
 
     # Create the plot
     #if 'x2' in df.columns:
@@ -122,7 +122,7 @@ def plotData(df):
         ax.plot(x1, y)
         ax.set_xlabel('x')
         ax.set_ylabel('y')
-
+    plt.title(title)
     plt.show()
     return None
 
@@ -173,9 +173,42 @@ def splitData(df):
 
 
 def concatenateDataframes(x_df, y):
-    """ Merge 2 Dataframes to one single df """
-    y_df = pd.DataFrame(y)  # predict() only returns numpy.ndarray
-    frames = [x_df, y_df]
-    combined_df = pd.concat(frames, axis=1)
+    """ Merge y to end of Dataframes """
+    #y_df = pd.DataFrame(y, columns=["y"])  # predict() only returns numpy.ndarray
+    #frames = [x_df, y_df]
+
+    #combined_df = pd.concat(frames, axis=1, ignore_index=True)
+    #combined_df = pd.concat(frames, axis=1)
+    #combined_df = x_df+y_df
+    #combined_df = pd.merge(x_df, y_df)
+    combined_df = x_df.assign(y=y)
+
     return combined_df
 
+
+def createPipeline(normalize=False):
+    # Create Pipeline to easily configure estimator
+    from sklearn.pipeline import Pipeline
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.kernel_ridge import KernelRidge
+
+    #TODO: create pipeline modular
+    # empty pipeline
+    # define model
+    #model = ("ridge", KernelRidge(kernel="rbf"))
+    #pipeline.append(model)
+    #pipeline = [model]
+    # define normalization method
+    #if normalize:
+    #    normalizer = ("scale", StandardScaler())
+    #    pipeline.append(normalizer)
+    # Create pipeline object
+    #pipeline_krr = Pipeline(pipeline)
+
+    pipeline_krr = Pipeline([
+        ("scale", StandardScaler()),
+        ("ridge", KernelRidge(kernel="rbf"))
+    ])
+
+
+    return pipeline_krr

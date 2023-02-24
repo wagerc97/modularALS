@@ -29,12 +29,18 @@ if __name__ == '__main__':
     #print("y:\n", y)
 
     # Plot data
-    util.plotData(df)
+    util.plotData(df, title="original df")
 
     # split data into train and test set
     X_train, y_train, X_test, y_test = util.splitData(df)
     print("\nX_train.head():\n", X_train.head())
     print("\ny_train.head():\n", y_train.head())
+
+    # Plot Train data
+    train_df = util.concatenateDataframes(X_train, y_train)
+    print("\nTrain df:\n", train_df)    #> [80 rows x 3 columns]
+    util.plotData(train_df, title="train data")
+
 
     # In sklearn ist ein höherer Score immer besser. Der mean_absolute_error (MAE) ist aber besser, je kleiner er ist.
     # Wenn wir den Scorer erstellen nehmen wir also - mean_absoute_error als Bewertungsmaß. Dazu setzten wir greater_is_better=False.
@@ -42,15 +48,8 @@ if __name__ == '__main__':
     from sklearn.metrics import mean_absolute_error, make_scorer
     score = make_scorer(mean_absolute_error, greater_is_better=False)
 
-
-    # Pipeline to easily configure estimator
-    from sklearn.pipeline import Pipeline
-    from sklearn.preprocessing import StandardScaler
-    from sklearn.kernel_ridge import KernelRidge
-    pipeline_krr = Pipeline([
-        ("scale", StandardScaler()),
-        ("ridge", KernelRidge(kernel="rbf"))
-    ])
+    # Create Pipeline to easily configure estimator
+    pipeline_krr = util.createPipeline(normalize=True)
 
     # Get best model
     bestModel = util.GridSearchCvForKrr(pipeline_krr, score, X_train, y_train)
@@ -59,17 +58,20 @@ if __name__ == '__main__':
     # Use analytical solution theta to predict best result
     #y_pred = myModel.predict(X_test=X_test, verbose=False)
     y_pred = bestModel.predict(X_test)
-    print(X_test.shape)
-    print(y_pred.shape)
+    print(f"y_pred: len={len(y_pred)}\n", y_pred) #> len=20, no NAN
+    print(f"X_test: len={len(X_test)}\n", X_test) #> len=20, no NAN
+    #print(X_test.shape) #> (20, 2)
+    #print(y_pred.shape) #> (20,)
 
     # Merge Dataframes
     pred_Xtest_df = util.concatenateDataframes(X_test, y_pred)
     print("\nCombined df:\n", pred_Xtest_df)
+    print(pred_Xtest_df.shape) #> (35, 3)
 
     # Plot prediction
     #myModel.plotPrediction(y_pred)
     #util.plotData(pred_Xtrain_df)
-    util.plotData(pred_Xtest_df)
+    util.plotData(pred_Xtest_df, title="Prediction on test")
 
     # Quelle: https://www.kaggle.com/code/wagerc97/uebung2-bsp2-angabe
 
