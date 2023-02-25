@@ -131,33 +131,38 @@ def simplifyTable(ptable):
     return ptable.drop(ptable.filter(regex='time|split|params|std_|param_').columns, axis=1).sort_values("rank_test_score").head()
 
 
+#TOdo: to model class
 def GridSearchCvForKrr(pipeline_krr, score, X_train, y_train, X_test, y_test):
     from sklearn.model_selection import GridSearchCV
+    # https://www.kaggle.com/code/wagerc97/uebung1-bsp2-angabe
 
     # Exhaustively search for best hyperparameters with GridSearchCV
-    model_krr = GridSearchCV(
+    grid_search = GridSearchCV(
         estimator=pipeline_krr,  # fresh estimator
         param_grid=[{  # hyperparameters
             "ridge__alpha": [0.001, 0.01, 0.1, 1],  # regularization strength, reduces variance of estimates, alpha=1/2C
             "ridge__gamma": [0.001, 0.01, 0.03, 0.05, 0.1],  #
             "ridge__kernel": ["rbf"]
         }],
-        n_jobs=-1,  # jobs to run in parallel (-1 uses all processes available)
+        n_jobs=-1,      # jobs to run in parallel (-1 uses all processes available)
         scoring=score,  # using a callable to score each model
-        cv=5  # k-fold cross validation
+        cv=5,           # k-fold cross validation
+        verbose=1
     )
 
     # fit the newly established model with data
-    #model_krr.fit(X_train, y_train)
+    trained_gs = grid_search.fit(X_train, y_train)
+
+    #TODO: cross-validation after gridsearchCV good?
     from sklearn.model_selection import cross_val_score
-    scores = cross_val_score(model_krr.fit(X_train, y_train), X_test, y_test)
+    test_scores = cross_val_score(trained_gs, X_test, y_test)
 
     # table of k cross validation results
-    table_krr = pd.DataFrame(model_krr.cv_results_)
+    table_krr = pd.DataFrame(grid_search.cv_results_)
     #table_krr.sort_values("rank_test_score").head()
     print(simplifyTable(table_krr))
 
-    return model_krr, scores
+    return grid_search, test_scores
 
 
 def splitData(df):
@@ -186,6 +191,7 @@ def concatenateDataframes(x_df, y):
     return combined_df
 
 
+#TODO: move to model class
 def createPipeline(normalize=False):
     # Create Pipeline to easily configure estimator
     from sklearn.pipeline import Pipeline
@@ -235,7 +241,7 @@ def plotPredictionAndData(pred_df, train_df, title):
         # define figure shape
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        for df, color, label in (pred_df, "red", "Prediction"), (train_df, "blue", "Train"):
+        for df, color, label in (pred_df, "r", "Prediction"), (train_df, "C0", "Train"):
             # Extract the x and y data from the dataframe
             x1 = df[df.columns[0]]
             x2 = df[df.columns[1]]
@@ -249,7 +255,7 @@ def plotPredictionAndData(pred_df, train_df, title):
     else: # 1D
         # define figure shape
         fig, ax = plt.subplots()
-        for df, color, label in (pred_df, "red", "Prediction"), (train_df, "blue", "Train"):
+        for df, color, label in (pred_df, "r", "Prediction"), (train_df, "C0", "Train"):
             # Extract the x and y data from the dataframe
             x1 = df[df.columns[0]]
             y = df[df.columns[-1]]
@@ -262,4 +268,22 @@ def plotPredictionAndData(pred_df, train_df, title):
     ax.legend()
     plt.show()
     return None
+
+
+#TODO: move to model class
+def saveModelToFile(filepath, model):
+    # save the model to disk
+    import joblib
+    joblib.dump(model, filepath)
+    print("\nModel saved to file:", filepath)
+    return None
+
+def loadModelFromFile(filepath, X_test, y_test):
+    # load the model from disk
+    import joblib
+    print("\nLoad model from file:", filepath)
+    loadedModel = joblib.load(filepath)
+    testScore = loadedModel.score(X_test, y_test)
+    return loadedModel, testScore
+
 

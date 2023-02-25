@@ -39,37 +39,49 @@ if __name__ == '__main__':
     score = util.defineScore()
 
     ### Create Pipeline to easily configure estimator ###
-    pipeline_krr = util.createPipeline(normalize=True)
+    pipeline = util.createPipeline(normalize=True)
+
+    ### Train model pipeline in Gridsearch with CV ###
+    krr_gscv, test_scores = util.GridSearchCvForKrr(pipeline, score, X_train, y_train, X_test, y_test)
+    print(f"Trained GridsearchCV object:\n{krr_gscv}\n")
 
     ### Get best model ###
-    bestModel, scores = util.GridSearchCvForKrr(pipeline_krr, score, X_train, y_train, X_test, y_test)
-    print(bestModel)
+    bestModel = krr_gscv.best_estimator_
+    print(f"Best train score: {krr_gscv.best_score_}") # Mean cross-validated score of the best_estimator
+    print(f"Best parameters: {krr_gscv.best_params_}") # Parameter setting that gave the best results on the hold out data.
+
+    ### Get TEST accuracy of best model ###
+    print("TEST score of best model:", round(bestModel.score(X_test, y_test), 3)) #> 0.997
+    print("Cross-validated TEST score of GridsearchCV:", test_scores) #>  [-90.58918323 -39.71723522 -98.90899151 -52.99895814 -85.60559008]
+    print("Mean score of GridsearchCV:", round(np.mean(test_scores), 3)) #> mean: -73.564
 
     ### Use analytical solution theta to predict best result ###
     y_pred = bestModel.predict(X_test)
-    #print(f"y_pred: len={len(y_pred)}\n", y_pred) #> len=20, no NAN
-    #print(f"X_test: len={len(X_test)}\n", X_test) #> len=20, no NAN
 
     ### Merge Dataframes ###
     pred_Xtest_df = util.concatenateDataframes(X_test, y_pred)
-    #print("\nCombined df:\n", pred_Xtest_df)
-    #print(pred_Xtest_df.shape) #> (35, 3)
 
-    ### Plot prediction ###
-    util.plotData(pred_Xtest_df, title="Prediction on test data")
+    ### Plot predicted points only ###
+    #util.plotData(pred_Xtest_df, title="Prediction on test data")
 
     ### Plot prediction against train data ####
     util.plotPredictionAndData(pred_df=pred_Xtest_df, train_df=train_df, title="Prediction vs train")
 
-    ### Get Accuracy of model ###
+    ### Store best model in external file ###
+    dirname = "models"
+    filename = "finalized_model.sav"
+    savepath = os.path.join(".", dirname, filename)
+    util.saveModelToFile(filepath=savepath, model=bestModel)
+
+    ### Load model from file ###
+    loadedModel, testScore = util.loadModelFromFile(savepath, X_test, y_test)
+    print("Model test score: ", round(testScore, 3))
+    print("Loaded model:\n", loadedModel)
+
+    # Quellen:
+    # Trivial: https://www.kaggle.com/code/wagerc97/uebung2-bsp2-angabe
+    # KRR: https://www.kaggle.com/code/wagerc97/uebung1-bsp2-angabe
+
+
     #TODO: ich habe GridSearchCV -> brauche ich dann noch extra eine cross_validate??
-    #TODO: Shoul i use a different score?
-
-    print("\npipeline.score:", round(bestModel.score(X_test, y_test), 3)) #> -26.773
-    print("\ncross_val_scores:\n", scores)
-    #>  [-90.58918323 -39.71723522 -98.90899151 -52.99895814 -85.60559008]
-    print("\nmean:", round(np.mean(scores),3)) #> mean: -73.564
-
-    # Quelle: https://www.kaggle.com/code/wagerc97/uebung2-bsp2-angabe
-
-
+    #TODO: Should i use a different score?
