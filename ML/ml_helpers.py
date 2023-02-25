@@ -1,14 +1,18 @@
 #!/usr/bin/python3
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Script with utility functions for mlmodel.py
+Script with utility functions for ML module
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import os
 import sys
+import csv
+import time
 import sklearn
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import joblib
+import myconfig
 
 
 def assertRequirements():
@@ -24,7 +28,10 @@ def mlSetup():
     mpl.rc('axes', labelsize=14)
     mpl.rc('xtick', labelsize=12)
     mpl.rc('ytick', labelsize=12)
-    print("-"*60, "\n")
+    print("\n")
+    print("+" * 30)
+    print(f"{__name__} is here")
+    print("+" * 30, "\n")
     return None
 
 def save_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
@@ -79,16 +86,17 @@ def plot1D(X, y, saveFileWithName=None):
         save_fig(saveFileWithName)
     plt.show()
 
-def readDataFromCsvToDf(filepath=os.path.join("..", "data", "data.csv"), verbose=False):
+#def readDataFromCsvToDf(filepath=os.path.join("..", "data", "data.csv"), verbose=False):
+def readDataFromCsvToDf(filepath=myconfig.TRAIN_DATA_FILE, verbose=False):
     """
     Read in data training data from csv-file and store it in dataframe.
     :param filepath:
+    :param verbose: print some stuff along the way
     :return: dataframe holding training data + problem name
     """
     # get data
     data = pd.read_csv(filepath, sep=';', header=1)
     # get problem name from first line
-    import csv
     with open(filepath, "r", newline='\n') as f:
         reader = csv.reader(f)
         problem_name = next(reader)[0]
@@ -272,19 +280,22 @@ def plotPredictionAndData(pred_df, train_df, title):
 
 
 #TODO: move to model class
-def saveModelToFile(filepath, model):
-    # save the model to disk
-    import joblib
+def saveModelToFile(model, filepath=myconfig.MODEL_FILE):
+    """save the model to disk"""
+    # make sure the file destination exists
+    os.makedirs(myconfig.MODEL_DIR, exist_ok=True)  # Make sure the directory exists
     joblib.dump(model, filepath)
     print("\nModel saved to file:", filepath)
     return None
 
-def loadModelFromFile(filepath, X_test, y_test):
-    # load the model from disk
-    import joblib
+def loadModelFromFile(X_test, y_test, filepath=myconfig.MODEL_FILE):
+    """load the model from disk"""
+    print("loadModelFromFile:",filepath)
     print("\nLoad model from file:", filepath)
     loadedModel = joblib.load(filepath)
     testScore = loadedModel.score(X_test, y_test)
     return loadedModel, testScore
+
+
 
 

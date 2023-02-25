@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt     # plot stuff
 from pymoo.optimize import minimize  # minimize solution
 from pymoo.visualization.scatter import Scatter  # special pymoo plotter
 from pymoo.visualization.fitness_landscape import FitnessLandscape  # allows illustrating problems as landscape
+
+import myconfig
+
+
 #import MyCallback
 
 #### Common error with tutorial ####
@@ -23,6 +27,12 @@ from pymoo.visualization.fitness_landscape import FitnessLandscape  # allows ill
 
 ######################################
 
+def setup():
+    print("\n")
+    print("+" * 30)
+    print(f"{__name__} is here")
+    print("+" * 30, "\n")
+
 def showFitnessLandscape(problem):
     """
     Show problem as landscape
@@ -30,22 +40,22 @@ def showFitnessLandscape(problem):
     """
     # 3D Surface model
     # Note: using n_samples to decrease the quality and allow turning 3D model on weak PC
-    FitnessLandscape(problem, angle=(45, 45), _type="surface", n_samples=40).show()
+    FitnessLandscape(problem, angle=(45, 45), _type="surface", n_samples=40, title=f"FitnessLandscape of {problem.name()}").show()
     # 2D Contour model
     #FitnessLandscape(problem, _type="contour", colorbar=True).show()
 
 
-def createProblem(problemName):
+def createProblem(problem_name):
     """
     Create a problem
-    :param problemName: enter one { Zakharov/ZDT1, Rosenbrock }
+    :param problem_name: enter one { Zakharov/ZDT1, Rosenbrock }
     :return: the problem object
     """
-    if problemName.lower() in ("zakharov", "zdt1", "z"):
+    if problem_name.lower() in ("zakharov", "zdt1", "z"):
         from pymoo.problems.multi import ZDT1
         # https://pymoo.org/problems/single/zakharov.html
         problem = ZDT1(n_var=2)
-    elif problemName.lower() in ("rosenbrock", "r"):
+    elif problem_name.lower() in ("rosenbrock", "r"):
         from pymoo.problems.single import Rosenbrock
         # https://pymoo.org/problems/single/rosenbrock.html
         problem = Rosenbrock(n_var=2)
@@ -232,31 +242,33 @@ def concatenateDataframes(x, y):
     return combined_df
 
 
-def storeDfInCsvFile(df, problem):
+def storeDfInCsvFile(df, problem, deleteOldData):
     """
     Store df in csv file.
     :param df: combined dataframe
     :return:
     """
-    dirPath = os.path.join("..","data")
-    fileName = "data.csv"
-    #fullPath = dirPath+fileName+".csv"
-    fullPath = os.path.join(dirPath, fileName)
-    print("fullPath",fullPath)
-    os.makedirs(dirPath, exist_ok=True)  # Make sure the directory exists
-
+    #dirPath = os.path.join("..","data")
+    #fileName = "data.csv"
+    ##fullPath = dirPath+fileName+".csv"
+    #fullPath = os.path.join(dirPath, fileName)
+    #print("fullPath",fullPath)
+    os.makedirs(myconfig.TRAIN_DATA_DIR, exist_ok=True)  # Make sure the directory exists
+    # delete old train data file if True
+    if deleteOldData:
+        os.remove(myconfig.TRAIN_DATA_FILE)
     # write df to new csv file and delete old content
-    df.to_csv(fullPath, encoding='utf-8',
+    df.to_csv(myconfig.TRAIN_DATA_FILE, encoding='utf-8',
               index=False,  # False: without index
               sep=";"       # custom seperator
               )
     # add problem name in first line
-    with open(fullPath, "r+") as f:
+    with open(myconfig.TRAIN_DATA_FILE, "r+") as f:
         file_data = f.read()
         f.seek(0,0)     # get the first line
         f.write(str(problem.name()) + '\n' + file_data)
 
-    print(f"Successfully stored {problem.name()}-data to location:", fullPath)
+    print(f"Successfully stored {problem.name()}-data to location:", myconfig.TRAIN_DATA_FILE)
     return None
 
 
@@ -284,6 +296,7 @@ def plotData(df):
         ax.set_xlabel('x')
         ax.set_ylabel('y')
 
+    plt.title("New train data")
     plt.show()
     return None
 

@@ -4,7 +4,7 @@ Class for ML model which wraps the model functions and thus provides a clearn UI
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import numpy as np
 import pandas as pd
-import utility as util
+import ml_helpers as helper
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression, Lasso, Ridge, SGDRegressor
@@ -100,7 +100,7 @@ class MachineLearningModel:
         plt.legend(loc="upper left", fontsize=14)
         plt.title(f"Model: {self.model.__class__.__name__}")
         plt.axis([0, 2, 0, 15])
-        util.save_fig("linear_model_predictions_plot")
+        helper.save_fig("linear_model_predictions_plot")
         plt.show()
 
     def getTrainedParameters(self):

@@ -6,27 +6,23 @@ Example use case with normal equation
 Source: https://www.kaggle.com/code/wagerc97/aml-regression
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-import os
-import numpy as np  # maths and stuff
-import pandas as pd  # data handling
-import matplotlib.pyplot as plt  # plot stuff
-import utility as util
+import matplotlib.pyplot as plt  # dont delete this
+import ml_helpers as helper
 from machineLearningModel import MachineLearningModel
 
-
-if __name__ == '__main__':
+def runExample():
 
     # Set up ML model environment
-    util.mlSetup()
+    helper.mlSetup()
 
     # Define equation and get X, y
-    X, y = util.defineNormalEquation(verbose=False)
+    X, y = helper.defineNormalEquation(verbose=False)
 
     # Plot these input and output values
-    #util.plot1D(X, y, saveFileWithName="generated_data_plot")
+    #helper.plot1D(X, y, saveFileWithName="generated_data_plot")
 
     # Compute analytical solution
-    theta_best = util.computeAnalyticalSolution(X,y)
+    theta_best = helper.computeAnalyticalSolution(X,y)
     print("theta_best:\n", theta_best)
 
     # Create a model of choice
@@ -54,3 +50,6 @@ if __name__ == '__main__':
     absoluteError = myModel.assessAccuracy2(theta_best=theta_best)
     print("absoluteError:",absoluteError)
 
+
+if __name__ == '__main__':
+    runExample()

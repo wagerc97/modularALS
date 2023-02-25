@@ -9,24 +9,24 @@ Note:
 - this project uses its own Python 3.10 interpreter
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-import utility as util
+import pymoo_helpers as helper
 
 
 if __name__ == '__main__':
 
     # Define Problem
-    problem = util.createProblem(problemName="rosenbrock")
+    problem = helper.createProblem(problem_name="rosenbrock")
     # SOO: Rosenbrock   (n_var: 2, n_obj: 1, n_constr: 0) -> solution is one single point
     # MOO: Zakharov     (n_var: 2, n_obj: 2, n_constr: 0) -> solution is pareto front in 2D
 
     # Define Algorithm
-    algorithm = util.createAlgorithm(algo="nsga2")
+    algorithm = helper.createAlgorithm(algo="nsga2")
 
     # Start the solver
-    problem, res = util.solver(problem, algorithm, iterations=50)
+    problem, res = helper.solver(problem, algorithm, iterations=50)
 
     # Pretty print the solution
-    util.summary(problem, res)
+    helper.summary(problem, res)
 
     # Plot the result
-    util.plotResultWithPymoo(problem, res)
+    helper.plotResultWithPymoo(problem, res)
