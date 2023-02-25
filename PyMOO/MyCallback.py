@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from pymoo.core.callback import Callback
 
 class MyCallback(Callback):

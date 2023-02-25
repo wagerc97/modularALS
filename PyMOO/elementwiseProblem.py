@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Part II: Find a Solution Set using Multi-objective Optimization¶
 Source: https://pymoo.org/getting_started/part_2.html

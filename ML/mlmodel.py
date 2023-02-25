@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Wrapper to build several ml models with easy interface
 
@@ -82,6 +83,3 @@ if __name__ == '__main__':
     # Trivial: https://www.kaggle.com/code/wagerc97/uebung2-bsp2-angabe
     # KRR: https://www.kaggle.com/code/wagerc97/uebung1-bsp2-angabe
 
-
-    #TODO: ich habe GridSearchCV -> brauche ich dann noch extra eine cross_validate??
-    #TODO: Should i use a different score?

@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Example Usage from PyMOO documentation:
 - We refer here to our documentation for all the details. However, for instance, executing NSGA2:

@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Script with utility functions for mlmodel.py
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -131,7 +132,7 @@ def simplifyTable(ptable):
     return ptable.drop(ptable.filter(regex='time|split|params|std_|param_').columns, axis=1).sort_values("rank_test_score").head()
 
 
-#TOdo: to model class
+#TODO: to model class
 def GridSearchCvForKrr(pipeline_krr, score, X_train, y_train, X_test, y_test):
     from sklearn.model_selection import GridSearchCV
     # https://www.kaggle.com/code/wagerc97/uebung1-bsp2-angabe
