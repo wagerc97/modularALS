@@ -35,7 +35,7 @@ def mlSetup():
 
 def save_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
     # Where to save the figures
-    PROJECT_ROOT_DIR = ".."
+    PROJECT_ROOT_DIR = "../.."
     CHAPTER_ID = "training_linear_models"
     IMAGES_PATH = os.path.join(PROJECT_ROOT_DIR, "images", CHAPTER_ID)
 
