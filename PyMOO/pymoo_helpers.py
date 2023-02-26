@@ -296,7 +296,8 @@ def plotData(df):
         ax.set_xlabel('x')
         ax.set_ylabel('y')
 
-    plt.title("New train data")
+    title = "New train data"+f" (n={df.shape[0]})"
+    plt.title(title)
     plt.show()
     return None
 
