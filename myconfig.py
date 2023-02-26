@@ -14,8 +14,12 @@ def testiamhere():
     print("+" * 30, "\n")
 
 
-
+# Training data
 TRAIN_DATA_DIR = os.path.join(configpath, "data")
-TRAIN_DATA_FILE = os.path.join(configpath, "data", "data.csv")
+TRAIN_DATA_FILE_NAME = "data.csv"
+TRAIN_DATA_FILE = os.path.join(configpath, "data", TRAIN_DATA_FILE_NAME)
+
+# Storing model
 MODEL_DIR = os.path.join(configpath, "ML", "models")
-MODEL_FILE = os.path.join(configpath, "ML", "models", "final_model.sav")
+MODEL_FILE_NAME = "final_model.sav"
+MODEL_FILE = os.path.join(configpath, "ML", "models", MODEL_FILE_NAME)

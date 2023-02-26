@@ -70,18 +70,13 @@ def main():
     helper.plotPredictionAndData(pred_df=pred_Xtest_df, train_df=train_df, title="Prediction vs train")
 
     ### Store best model in external file ###
-    filename = "finalized_model.sav"
-    filepath = os.path.join(myconfig.MODEL_DIR, filename)
-
-    print("main:", filepath)
     helper.saveModelToFile(bestModel)
 
     ### Load model from file ###
-    print("main:", filepath)
-    loadedModel, testScore = helper.loadModelFromFile(filepath, X_test, y_test)
-
+    loadedModel, testScore = helper.loadModelFromFile(X_test, y_test)
     print("Model test score: ", round(testScore, 3))
     print("Loaded model:\n", loadedModel)
+
 
     # Quellen:
     # Trivial: https://www.kaggle.com/code/wagerc97/uebung2-bsp2-angabe

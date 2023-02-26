@@ -5,7 +5,6 @@ Script with utility functions for ML module
 import os
 import sys
 import csv
-import time
 import sklearn
 import numpy as np
 import pandas as pd
@@ -290,7 +289,6 @@ def saveModelToFile(model, filepath=myconfig.MODEL_FILE):
 
 def loadModelFromFile(X_test, y_test, filepath=myconfig.MODEL_FILE):
     """load the model from disk"""
-    print("loadModelFromFile:",filepath)
     print("\nLoad model from file:", filepath)
     loadedModel = joblib.load(filepath)
     testScore = loadedModel.score(X_test, y_test)
