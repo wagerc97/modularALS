@@ -9,6 +9,7 @@
 - Visualize results 
 - Assess and visualize model score and fit 
 - Store ml model
+- build pyhton class to wrap model generation
 
 <---- here ----> 
 

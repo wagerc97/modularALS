@@ -26,33 +26,21 @@ import myconfig
 
 class MachineLearningModel:
     def __init__(self, **kwargs):
-        """
-        A class for building and training machine learning models using scikit-learn.
+        """ A class for building and training machine learning models using scikit-learn. """
 
-        :param model_type: The type of machine learning model to build. Currently, only linear regression is supported.
-        Implemented: [linear_regression, lasso, ridge]
-        :type model_type: str
-        :param normalize: Whether to normalize the input features before training the model. Default is False.
-        :type normalize: bool
-
-        Example usage:
-        >> model = MachineLearningModel('linear_regression', normalize=True)
-        >> model.train(X_train, y_train)
-        >> y_pred = model.predict(X_test)
-        >> print(model)
-        """
-        self.scaler = None
-        self.normalize = None
+        # model attributes
+        self.normalize = None           # BOOLEAN value
+        self.scaler = None              # type of normalization
         self.model_type = None          # model object
-        self.preprocessor = None
-        self.score = None
-        self.pipeline = None
-        self.paramGrid = None
+        self.preprocessor = None        # standardization, ...
+        self.pipeline = None            # preprocessor + model type
+        self.score = None               # score function (MAE, MSE, ...)
+        self.paramGrid = None           # hyperparameter grid for gridsearch
         self.grid_search_cv = None      # gridsearch with cv wrapping pipeline
         self.gscv_test_scores = None    # cross-validation test score of gridsearch
         self.bestEstimator = None       # best estimator stored after training
 
-        # Data
+        # Data storage
         self.df = None                  # initial data
         self.train_df = None            # train split
         self.test_df = None             # test split

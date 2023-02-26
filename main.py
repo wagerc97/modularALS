@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join('.', 'PyMOO')))
 
 problem = "Rosenbrock"
 seed = 42
-N = 300
+N = 100
 
 if __name__ == '__main__':
 
@@ -22,6 +22,6 @@ if __name__ == '__main__':
 
 
     ### Create, train, evaluate and store ml model ###
-    import ML_modular.mlmodel as mlm
+    import ML.mlmodel as mlm
     mlm.main()
 
