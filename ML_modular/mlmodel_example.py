@@ -8,11 +8,11 @@ Source: https://www.kaggle.com/code/wagerc97/aml-regression
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import matplotlib.pyplot as plt  # dont delete this
 import ml_helpers as helper
-from machineLearningModel import MachineLearningModel
+from old.ML_procedural.machineLearningModel import MachineLearningModel
 
 def runExample():
 
-    # Set up ML model environment
+    # Set up M L model environment
     helper.mlSetup()
 
     # Define equation and get X, y

@@ -17,7 +17,7 @@ def main():
     ### Check system requirements ###
     helper.assertRequirements()
 
-    ### Set up ML model environment ###
+    ### Set up M L model environment ###
     helper.mlSetup()
 
     ### Read data from csv to new df ###

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Class for ML model which wraps the model functions and thus provides a clearn UI. 
+Class for MachineLearning model which wraps the model functions and thus provides a clearn UI. 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import os
 
@@ -120,16 +120,10 @@ class MachineLearningModel:
 
 
     def createPipeline(self, model_name, normalize=False):
-        # Create Pipeline to easily configure estimator
-
-        # TODO: create pipeline modular
-        # empty pipeline
-        # define model
         """
-        pipeline_krr = Pipeline([
-            ("scale", StandardScaler()),
-            ("ridge", KernelRidge(kernel="rbf"))
-        ])
+        Create Pipeline to easily configure estimator
+        - preprocessor
+        - model type
         """
 
         # Create model from input parameter
@@ -184,7 +178,7 @@ class MachineLearningModel:
         # fit the newly established model with data
         self.grid_search_cv.fit(X_train, self.y_train)
 
-        # TODO: cross-validation after gridsearchCV good? -> according to Lecture yes
+        # Cross-validation of gridsearch with TEST data
         self.gscv_test_scores = cross_val_score(self.grid_search_cv, self.X_test, self.y_test)
 
         # store best estimator

@@ -4,7 +4,6 @@
 from myconfig import *
 # Bring your packages onto the path
 import os, sys
-#sys.path.append(os.path.abspath(os.path.join('.', 'ML')))  # '.' for main in .../Optimization/main.py
 sys.path.append(os.path.abspath(os.path.join('.', 'ML_modular')))  # '.' for main in .../Optimization/main.py
 sys.path.append(os.path.abspath(os.path.join('.', 'PyMOO')))
 
@@ -23,7 +22,6 @@ if __name__ == '__main__':
 
 
     ### Create, train, evaluate and store ml model ###
-    #import ML.mlmodel as mlm
     import ML_modular.mlmodel as mlm
     mlm.main()
 
