@@ -252,12 +252,17 @@ class MachineLearningModel:
         """
         Plot predicted data against X_test data and train_df as well.
         """
+        # Check if prediction exists
+        if self.predXtest_df is None:
+            self.predict()
         # Check dimensionality of data
         if len(self.train_df.columns) == 3:  # 2D
             # define figure shape
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')
-            for df, color, label in (self.predXtest_df, "r", "Prediction" + f" (n={self.predXtest_df.shape[0]})"), (self.train_df, "C0", "Train" + f" (n={self.train_df.shape[0]})"):
+            for df, color, label in (
+                    self.predXtest_df, "r", "Prediction" + f" (n={self.predXtest_df.shape[0]})"), \
+                    (self.train_df, "C0", "Train" + f" (n={self.train_df.shape[0]})"):
                 # Extract the x and y data from the dataframe
                 x1 = df[df.columns[0]]
                 x2 = df[df.columns[1]]
