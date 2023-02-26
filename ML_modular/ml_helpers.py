@@ -33,6 +33,8 @@ def mlSetup():
     print("+" * 30, "\n")
     return None
 
+
+### NORMAL EQUATION FUNCTIONS ###
 def save_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
     # Where to save the figures
     PROJECT_ROOT_DIR = ".."
@@ -40,7 +42,9 @@ def save_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
     IMAGES_PATH = os.path.join(PROJECT_ROOT_DIR, "images", CHAPTER_ID)
 
     os.makedirs(IMAGES_PATH, exist_ok=True)
+
     path = os.path.join(IMAGES_PATH, fig_id + "." + fig_extension)
+
     print("Saving figure", fig_id)
     if tight_layout:
         plt.tight_layout()
@@ -86,13 +90,10 @@ def plot1D(X, y, saveFileWithName=None):
         save_fig(saveFileWithName)
     plt.show()
 
+#################################
+
 def readDataFromCsvToDf(filepath=myconfig.TRAIN_DATA_FILE, verbose=False):
-    """
-    Read in data training data from csv-file and store it in dataframe.
-    :param filepath:
-    :param verbose: print some stuff along the way
-    :return: dataframe holding training data + problem name
-    """
+    """ Read in data training data from csv-file and store it in dataframe. """
     # get data
     data = pd.read_csv(filepath, sep=';', header=1)
     # get problem name from first line
@@ -105,7 +106,8 @@ def readDataFromCsvToDf(filepath=myconfig.TRAIN_DATA_FILE, verbose=False):
         print(data)
     return data, problem_name
 
-def plotData(df, title=""):
+
+def plotRawData(df, title=""):
     # Extract the x and y data from the dataframe
     if len(df.columns) > 2:
         x1 = df[df.columns[0]]
@@ -134,121 +136,16 @@ def plotData(df, title=""):
     return None
 
 def simplifyTable(ptable):
+    """ Simplify the score-table of gridsearch """
     print("\nNumber of columns in table:", len(ptable))
     pd.set_option('display.max_columns', None)
     return ptable.drop(ptable.filter(regex='time|split|params|std_|param_').columns, axis=1).sort_values("rank_test_score").head()
-
-def splitData(df):
-    from sklearn.model_selection import train_test_split
-
-    # Data split
-    data_train, data_test = train_test_split(df.copy(), test_size=0.2, random_state=42)
-    # assign X all columns except "y" (which we want to predict)
-    # assign y the "y" column
-    X_train, y_train = data_train.drop(["y"], axis=1), data_train.y
-    X_test, y_test = data_test.drop(["y"], axis=1), data_test.y
-    return X_train, y_train, X_test, y_test
 
 def concatenateDataframes(x_df, y):
     """ Merge y to end of Dataframes """
     combined_df = x_df.assign(y=y)
     return combined_df
 
-
-#TODO: move to ml model
-def defineScore():
-    from sklearn.metrics import make_scorer, mean_absolute_error
-    # It takes a score function, such as
-    # ~sklearn.metrics.accuracy_score,
-    # ~sklearn.metrics.mean_squared_error,
-    # ~sklearn.metrics.adjusted_rand_score or
-    # ~sklearn.metrics.average_precision_score and returns a callable that ...
-
-    # Score for KRR -> MAE
-    score = make_scorer(mean_absolute_error, greater_is_better=False)
-    # In sklearn ist ein höherer Score immer besser. Der mean_absolute_error (MAE) ist aber besser, je kleiner er ist.
-    # Wenn wir den Scorer erstellen nehmen wir also - mean_absoute_error als Bewertungsmaß. Dazu setzten wir greater_is_better=False.
-    # Dementsprechend werden die Scores im Grid Search auch negativ sein und der Score, der am nähesten zu 0 ist der beste.
-    return score
-
-
-
-#TODO: move to model class
-def createPipeline(normalize=False):
-    # Create Pipeline to easily configure estimator
-    from sklearn.pipeline import Pipeline
-    from sklearn.pipeline import make_pipeline
-    from sklearn.preprocessing import StandardScaler
-    from sklearn.kernel_ridge import KernelRidge
-
-    #TODO: create pipeline modular
-    # empty pipeline
-    # define model
-
-    #TODO: define svr model
-
-    #model = ("ridge", KernelRidge(kernel="rbf"))
-    #pipeline.append(model)
-    #pipeline = [model]
-    # define normalization method
-    #if normalize:
-    #    normalizer = ("scale", StandardScaler())
-    #    pipeline.append(normalizer)
-    # Create pipeline object
-    #pipeline_krr = Pipeline(pipeline)
-    """
-    pipeline_krr = Pipeline([
-        ("scale", StandardScaler()),
-        ("ridge", KernelRidge(kernel="rbf"))
-    ])
-    """
-    # define preprocessing, scaler, encoder, ...
-    preprocessor = StandardScaler() # standardscaler__
-
-    # chose model
-    model_name = KernelRidge(kernel="rbf") # kernelridge__
-
-    # create pipeline
-    pipeline = make_pipeline(preprocessor, model_name)
-    print(pipeline)
-
-    return pipeline
-
-
-
-#TODO: move to model class
-def GridSearchCvForKrr(pipeline_krr, score, X_train, y_train, X_test, y_test):
-    from sklearn.model_selection import GridSearchCV
-    # https://www.kaggle.com/code/wagerc97/uebung1-bsp2-angabe
-
-    # Exhaustively search for best hyperparameters with GridSearchCV
-    grid_search = GridSearchCV(
-        estimator=pipeline_krr,  # fresh estimator
-        param_grid=[{  # hyperparameters
-            "kernelridge__alpha": [0.001, 0.01, 0.1, 1],  # regularization strength, reduces variance of estimates, alpha=1/2C
-            "kernelridge__gamma": [0.001, 0.01, 0.03, 0.05, 0.1],  #
-            "kernelridge__kernel": ["rbf"]
-        }],
-        n_jobs=-1,      # jobs to run in parallel (-1 uses all processes available)
-        scoring=score,  # using a callable to score each model
-        cv=5,           # k-fold cross validation
-        verbose=1
-    )
-
-    # fit the newly established model with data
-    trained_gs = grid_search.fit(X_train, y_train)
-
-    #TODO: cross-validation after gridsearchCV good?
-    # -> according to Lecture yes
-    from sklearn.model_selection import cross_val_score
-    test_scores = cross_val_score(trained_gs, X_test, y_test)
-
-    # table of k cross validation results
-    table_krr = pd.DataFrame(grid_search.cv_results_)
-    #table_krr.sort_values("rank_test_score").head()
-    print(simplifyTable(table_krr))
-
-    return grid_search, test_scores
 
 
 
@@ -258,7 +155,7 @@ def plotPredictionAndData(pred_df, train_df, title):
         # define figure shape
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        for df, color, label in (pred_df, "r", "Prediction"), (train_df, "C0", "Train"):
+        for df, color, label in (pred_df, "r", "Prediction"+f" (n={pred_df.shape[0]})"), (train_df, "C0", "Train"+f" (n={train_df.shape[0]})"):
             # Extract the x and y data from the dataframe
             x1 = df[df.columns[0]]
             x2 = df[df.columns[1]]
@@ -286,7 +183,7 @@ def plotPredictionAndData(pred_df, train_df, title):
     plt.show()
     return None
 
-#TODO: move to model class
+
 def saveModelToFile(model, filepath=myconfig.MODEL_FILE):
     """save the model to disk"""
     # make sure the file destination exists

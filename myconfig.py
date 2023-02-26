@@ -10,7 +10,7 @@ def testiamhere():
     print("\n")
     print("+" * 30)
     print(f"{__name__} is here")
-    print("config path =", configpath)
+    print("Project path=" + configpath)
     print("+" * 30, "\n")
 
 

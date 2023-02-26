@@ -4,14 +4,14 @@
 from myconfig import *
 # Bring your packages onto the path
 import os, sys
-sys.path.append(os.path.abspath(os.path.join('.', 'ML')))  # '.' for main in .../Optimization/main.py
+#sys.path.append(os.path.abspath(os.path.join('.', 'ML')))  # '.' for main in .../Optimization/main.py
 sys.path.append(os.path.abspath(os.path.join('.', 'ML_modular')))  # '.' for main in .../Optimization/main.py
 sys.path.append(os.path.abspath(os.path.join('.', 'PyMOO')))
 
 
 problem = "Rosenbrock"
 seed = 42
-N = 400
+N = 300
 
 if __name__ == '__main__':
 
