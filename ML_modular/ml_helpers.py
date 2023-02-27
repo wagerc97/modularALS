@@ -135,18 +135,20 @@ def plotRawData(df, title=""):
     plt.show()
     return None
 
-def simplifyTable(ptable):
-    """ Simplify the score-table of gridsearch """
+def printSimplifiedTable(ptable):
+    print("+--------------------------------------------------------+")
     print("\nNumber of columns in table:", len(ptable))
-    pd.set_option('display.max_columns', None)
-    return ptable.drop(ptable.filter(regex='time|split|params|std_|param_').columns, axis=1).sort_values("rank_test_score").head()
+    print("==========================================================")
+    pd.set_option('display.max_columns', None) # print all columns
+    print(ptable.drop(ptable.filter(regex='time|split|params|std_|param_').columns, axis=1).sort_values("rank_test_score").head())
+    print("+--------------------------------------------------------+")
+    return None
+
 
 def concatenateDataframes(x_df, y):
     """ Merge y to end of Dataframes """
     combined_df = x_df.assign(y=y)
     return combined_df
-
-
 
 
 def plotPredictionAndData(pred_df, train_df, title):

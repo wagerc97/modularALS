@@ -52,6 +52,11 @@ class MachineLearningModel:
         self.pred_df = None             # Dataframe with column name "y_pred"
         self.predXtest_df = None        # Dataframe with X_test and y_pred
 
+        # Results
+        self.train_result_df = None     # ordered train results
+        self.tr_df_slim = None          # Only interesting columns, first 5 rows, rounded to 2 decimals
+
+
 
     def __str__(self):
         """ Allows printing information about the model """
@@ -177,19 +182,40 @@ class MachineLearningModel:
         if self.normalize:
             X_train = self.scaler.fit_transform(self.X_train)
 
-        # fit the newly established model with data
+        # TRAIN: fit the newly established model with data
         self.grid_search_cv.fit(X_train, self.y_train)
 
-        # Cross-validation of gridsearch with TEST data
+        # TEST: Cross-validation of gridsearch with TEST data
         self.gscv_test_scores = cross_val_score(self.grid_search_cv, self.X_test, self.y_test)
 
-        # store best estimator
+        # Store best estimator in class attribute
         self.bestEstimator = self.grid_search_cv.best_estimator_
 
+        # table of k cross validation results
+        self.train_result_df = pd.DataFrame(grid_search.cv_results_).sort_values("rank_test_score")
+
+        # Only interesting columns, rounded to 2 decimals, and only the first 5 rows
+        self.tr_df_slim = self.train_result_df.drop(self.train_result_df.filter(regex='split|params|std_fit_time|std_score_time').columns, axis=1).head().round(decimals=2)
+
         if verbose:
-            # table of k cross validation results
-            score_table = pd.DataFrame(grid_search.cv_results_)
-            print(helper.simplifyTable(score_table))
+            helper.printSimplifiedTable(self.tr_df_slim)
+
+
+    def storeDfToTemporaryFile(self, df=None):
+        """ Store the most important train results in a separate file  """
+        if df is None:
+            df = self.tr_df_slim
+        # store the dataframe with results to a separate csv file
+        filepath = myconfig.TMP_TABLE_FILE
+        dirpath = myconfig.TMP_TABLE_DIR
+        print(filepath)
+        print(dirpath)
+        # assert folder exists
+        os.makedirs(dirpath, exist_ok=True)
+        # Write dataframe to CSV file and overwrite existing file
+        df.to_csv(filepath, index=False, mode='w', sep=';')
+        print("\nResults were saved to file:", filepath)
+        return None
 
 
     def getTestScore(self, X_test=None, y_test=None):
