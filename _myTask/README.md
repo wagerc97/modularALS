@@ -9,14 +9,25 @@
 - Visualize results 
 - Assess and visualize model score and fit 
 - Store ml model
-- build pyhton class to wrap model generation
+- build Python class to wrap model generation
 
 <---- here ----> 
 
 ### Optimize model in procedure
-- Train ml model and repeat until ml model is precise enough
-- Extract procedure and generalize
+- __Prediction with ml model__ on new data
+- Use __Optimization algo__ to generate pareto front on ML model predictions
+- Visualize pareto front
+
+### Evaluate pareto candidates
+- define small set of promising pareto candidates
+- Simuliere Mikromagentische Rechnung mit echten Problem-Daten (langsam)
+- Visualize error between predicted values and "true" values
 
 ### Generalize and automate training 
 - Apply procedure on bigger problems
 - Incorporate MOO to automate training 
+
+### EXTRAS TODO ...
+- more ML models
+- higher dimensional problem 
+- use different optimization algos 

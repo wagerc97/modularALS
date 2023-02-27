@@ -128,28 +128,28 @@ def summary(problem, res):
     print("-" * NUM_SIGN)
 
 
-def writeResultValuesToFile(res):
+def writeResultValuesToFile(result):
     """
     Writes design space values (res.X aka X) and objective space values (res.F aka Y) to a csv file
-    :param res:
+    :param result:
     :return:
     """
     print("writing result values to file...")
     print("well actually not yet -> todo: implement this stuff ")
 
 
-def plotResultWithPymoo(problem, res):
+def plotResultWithPymoo(problem, result):
     """
     Plot the result.
     :param problem: the problem object
-    :param res: the result object
+    :param result: the result object
     """
     plot = Scatter()
     plot.add(problem.pareto_front(),  # add line to indicate the pareto front
              plot_type="line",
              color="black",
              alpha=0.7)  # thickness
-    plot.add(res.F,
+    plot.add(result.F,
              color="red")
     plot.show()
 

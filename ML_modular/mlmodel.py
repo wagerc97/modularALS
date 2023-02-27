@@ -39,17 +39,30 @@ def main():
     #helper.plotData(myModel.train_df, title="train data")
 
     ### Define score ###
+    # [ mae, ... ]
     myModel.defineScore("mae")
 
     ### Create Pipeline to easily configure estimator ###
-    myModel.createPipeline("krr", normalize=True)
+    # [ krr, svr,... ]
+    myModel.createPipeline("svr", normalize=True)
+    suffix = myModel.getModelSuffix()
+    print(f"Model suffix is '{suffix}'")
 
     ### Define hyperparameters for grid search ###
-    param_dict = {
-        "kernelridge__alpha":[0.001, 0.01, 0.1, 1],
-        "kernelridge__gamma": [0.001, 0.01, 0.03, 0.05, 0.1]
+    param_dict_krr = {
+        suffix+"alpha":[0.001, 0.01, 0.1, 1],
+        suffix+"gamma": [0.001, 0.01, 0.03, 0.05, 0.1],
+        suffix+"kernel": ["rbf"]
     }
-    myModel.defineParamGrid(param_dict)
+    param_dict_svr = {
+        "gamma": [0.001, 0.01, 0.03, 0.05, 0.1],               # kernel coefficients
+        "epsilon": [0.001, 0.01, 0.03, 0.05, 0.1, 0.5, 1],     # epsilon tube
+        "C": [0.5, 5.0, 50.0],                                 # regularization, C=1/2alpha
+        "kernel": ["rbf"]
+    }
+
+    PARAM_DICT = param_dict_svr
+    myModel.defineParamGrid(PARAM_DICT)
 
     ### Train model pipeline in Gridsearch with CV ###
     myModel.applyGridSearchCV(verbose=True)
@@ -81,7 +94,7 @@ def main():
 
 
     # Quellen:
-    # Trivial: https://www.kaggle.com/code/wagerc97/uebung2-bsp2-angabe
+    # SVR: https://www.kaggle.com/code/wagerc97/uebung2-bsp2-angabe
     # KRR: https://www.kaggle.com/code/wagerc97/uebung1-bsp2-angabe
 
 

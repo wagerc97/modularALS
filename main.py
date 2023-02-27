@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join('.', 'PyMOO')))
 
 problem = "Rosenbrock"
 seed = 42
-N = 200
+N = 150
 
 if __name__ == '__main__':
 

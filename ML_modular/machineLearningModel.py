@@ -32,6 +32,7 @@ class MachineLearningModel:
         self.normalize = None           # BOOLEAN value
         self.scaler = None              # type of normalization
         self.model_type = None          # model object
+        self.prefix = None        # model type defines suffix of hyperparameters
         self.preprocessor = None        # standardization, ...
         self.pipeline = None            # preprocessor + model type
         self.score = None               # score function (MAE, MSE, ...)
@@ -113,14 +114,15 @@ class MachineLearningModel:
         - preprocessor
         - model type
         """
-
         # Create model from input parameter
         if model_name.lower() in ('krr', 'kernel_ridge_regressor'):
-            self.model_type = KernelRidge(kernel="rbf") # kernelridge__
+            #self.model_type = KernelRidge(kernel="rbf") # kernelridge__
+            self.model_type = KernelRidge() # kernelridge__
         elif model_name.lower() in ('svr', 'support_vector_regression'):
-            self.model_type = SVR(kernel="rbf")
+            #self.model_type = SVR(kernel="rbf")
+            self.model_type = SVR()
         else:
-            raise ValueError(f'Invalid model type: {model_name}')
+            raise ValueError(f'Invalid model type: "{model_name}"')
         print("model_type:", self.model_type)
 
         # define preprocessing, scaler, encoder, ...
@@ -129,18 +131,30 @@ class MachineLearningModel:
 
         # create pipeline
         self.pipeline = make_pipeline(self.preprocessor, self.model_type)
-        print(self.pipeline)
+        # store model suffix for hyperparameters
+        self.prefix = str(self.pipeline).split("'")[-2] + "__"
 
+    def getPipeline(self):
+        return self.pipeline
+
+    def getModelSuffix(self):
+        return self.prefix
 
     def defineParamGrid(self, param_grid):
         """ Define hyperparameters for grid search """
         if param_grid is None:
             # my default parameters for krr
+            print(">> choosing default KRR parameters because no param grid was given")
             param_grid = [{
-                "kernelridge__alpha": [0.001, 0.01, 0.1, 1],
-                "kernelridge__gamma": [0.001, 0.01, 0.03, 0.05, 0.1],
-                #"kernelridge__kernel": ["rbf"]
+                "alpha": [0.001, 0.01, 0.1, 1],
+                "gamma": [0.001, 0.01, 0.03, 0.05, 0.1],
+                "kernel": ["rbf"]
             }]
+
+        # Add prefix to keys
+        for key in list(param_grid.keys()):
+            new_key = self.prefix + key
+            param_grid[new_key] = param_grid.pop(key)
 
         self.paramGrid = param_grid
 
