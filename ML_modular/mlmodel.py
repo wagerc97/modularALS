@@ -44,22 +44,28 @@ def main():
 
     ### Create Pipeline to easily configure estimator ###
     # [ krr, svr,... ]
-    myModel.createPipeline("svr", normalize=True)
+    MODEL = "krr"
+    myModel.createPipeline(MODEL, normalize=True)
 
     ### Define hyperparameters for grid search ###
-    param_dict_krr = {
-        "alpha":[0.001, 0.01, 0.1, 1],
-        "gamma": [0.05, 0.1, 0.5, 1, 5, 10],
-        "kernel": ["rbf"]
-    }
-    param_dict_svr = {
-        "gamma": [0.1, 0.5, 1, 5, 10, 50],               # kernel coefficients
-        "epsilon": [0.001, 0.01, 0.05, 0.1, 0.5, 1],     # epsilon tube
-        "C": [1000, 5000, 10000, 50000, 100000, 500000],    # regularization, C=1/2alpha
-        "kernel": ["rbf"]
-    }
+    if MODEL == "krr":
+        param_dict_krr = {
+            "alpha":[0.001, 0.01, 0.1, 1],
+            "gamma": [0.05, 0.1, 0.5, 1, 5, 10],
+            "kernel": ["rbf"]
+        }
+        PARAM_DICT = param_dict_krr
+    elif MODEL == "SVR":
+        param_dict_svr = {
+            "gamma": [0.1, 0.5, 1, 5, 10, 50],               # kernel coefficients
+            "epsilon": [0.001, 0.01, 0.05, 0.1, 0.5, 1],     # epsilon tube
+            "C": [1000, 5000, 10000, 50000, 100000, 500000],    # regularization, C=1/2alpha
+            "kernel": ["rbf"]
+        }
+        PARAM_DICT = param_dict_svr
+    else:
+        raise Exception(f"Model type not given in mlmodel.py (given type was {MODEL})")
 
-    PARAM_DICT = param_dict_svr
     myModel.defineParamGrid(PARAM_DICT)
 
     ### Train model pipeline in Gridsearch with CV ###

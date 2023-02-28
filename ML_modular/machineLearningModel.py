@@ -35,10 +35,11 @@ class MachineLearningModel:
         self.prefix = None        # model type defines suffix of hyperparameters
         self.preprocessor = None        # standardization, ...
         self.pipeline = None            # preprocessor + model type
-        self.score = None               # score function (MAE, MSE, ...)
+        self.scorer = None               # score function (MAE, MSE, ...)
         self.paramGrid = None           # hyperparameter grid for gridsearch
         self.grid_search_cv = None      # gridsearch with cv wrapping pipeline
-        self.gscv_test_scores = None    # cross-validation test score of gridsearch
+        self.gscv_test_scores = None    # cross-validation test scores of gridsearch
+        self.testscore = None           # test score of best estimator
         self.bestEstimator = None       # best estimator stored after training
 
         # Data storage
@@ -106,9 +107,9 @@ class MachineLearningModel:
         # ~sklearn.metrics.average_precision_score and returns a callable that ...
 
         if score_type.lower() in ('mae', 'mean_absolute_error'):
-            self.score = make_scorer(mean_absolute_error, greater_is_better=False)
+            self.scorer = make_scorer(mean_absolute_error, greater_is_better=False)
         elif score_type.lower() in ('support_vector_regression', 'svr'):
-            self.score = make_scorer(accuracy_score)
+            self.scorer = make_scorer(accuracy_score)
         else:
             raise ValueError(f'Invalid score type: {score_type}')
 
@@ -172,7 +173,7 @@ class MachineLearningModel:
             estimator=self.pipeline,    # fresh estimator
             param_grid=self.paramGrid,  # grid of hyperparameters
             n_jobs=-1,                  # jobs to run in parallel (-1 uses all processes available)
-            scoring=self.score,         # using a callable to score each model
+            scoring=self.scorer,         # using a callable to score each model
             cv=5,                       # k-fold cross validation (default=5)
             verbose=1
         )
@@ -223,12 +224,15 @@ class MachineLearningModel:
         Get the prediction score of the best estimator on the TEST dataset.
         Input of X_test, y_test is optional. Default is stored in class already.
         """
-        if X_test is None:
-            X_test = self.X_test
-        if y_test is None:
-            y_test = self.y_test
-        bestModel_testScore = self.bestEstimator.score(X_test, y_test)
-        return round(bestModel_testScore, 3)
+        if self.testscore is None:
+            if X_test is None:
+                X_test = self.X_test
+            if y_test is None:
+                y_test = self.y_test
+            bestModel_testScore = self.bestEstimator.score(X_test, y_test)
+            return round(bestModel_testScore, 3)
+        else:
+            return round(self.testscore, 3)
 
 
     def getAllCvTestScores(self):
@@ -316,6 +320,8 @@ class MachineLearningModel:
             raise ValueError("Can only plot df with 3 columns (x1, x2, y)")
 
         title = title + f" (n={self.predXtest_df.shape[0] + self.train_df.shape[0]})"
+        #title = title + f" Test score={self.getTestScore()}"
+        title = title + f" Test score={self.getTestScore()}"
         plt.title(title)
         ax.legend()
         plt.show()
