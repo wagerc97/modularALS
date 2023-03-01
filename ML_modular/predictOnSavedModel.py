@@ -12,19 +12,20 @@ from dataHandler import DataHandler
 
 def main():
 
-    myDataHandler = DataHandler()
+    ### invoke a new instance of DataHandler ###
+    dataHandler = DataHandler()
+
+    ### provide data from csv file ###
+    dataHandler.kickStartFromFile()
 
     ### Load model from file ###
     loadedModel = helper.loadModelFromFile()
     print("Loaded model:\n", loadedModel)
 
-    ### Define TEST data ###
-    myDataHandler.readDataFromCsvToDf(filename="new_data.csv")
 
     #testScore = helper.getTestScore(loadedModel, X_test, y_test)
-    testScore = loadedModel.score(X_test, y_test)
+    testScore = loadedModel.score(dataHandler.X_test, dataHandler.y_test)
     print("Model test score: ", round(testScore, 3))
-
 
 
 if __name__ == '__main__':

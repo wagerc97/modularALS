@@ -16,7 +16,6 @@ from sklearn.preprocessing import StandardScaler
 class DataHandler:
     def __init__(self, **kwargs):
         """ A class to handle data for ml model """
-
         # Data storage
         self.df = None                  # initial data
         self.train_df = None            # train split
@@ -29,10 +28,31 @@ class DataHandler:
         self.predXtest_df = None        # Dataframe with X_test and y_pred
 
 
-
     def __str__(self):
         """ Allows printing information about the model """
         return None
+
+    def setDataframe(self, df):
+        self.df = df
+
+
+    def kickStartFromDataframe(self, df=None):
+        if self.df is None and df is None:
+            raise ValueError("Please provide a dataframe for the dataHandler first")
+        if self.df is None:
+            self.df = df
+        # Define data splits (train and test)
+        self.defineDataSplits(self.df)
+
+
+    def kickStartFromFile(self, filename=None, filepath=myconfig.TRAIN_DATA_FILE, verbose=False):
+        """ Read in data from file and define test- and trainsplits """
+        # get data from CSV file
+        _ = self.readDataFromCsvToDf(filename, filepath, verbose)
+
+        # Define data splits (train and test)
+        self.defineDataSplits(self.df)
+
 
 
     def defineDataSplits(self, param_df, random_seed=42):
@@ -87,10 +107,6 @@ class DataHandler:
         #self.y_test = pd.DataFrame(self.scaler_y.transform(self.y_test), columns=['y'])
         #print("\n\n", self.X_train)
         #print("\n\n", self.X_test)
-
-
-    def setDataframe(self, df):
-        self.df = df
 
 
     def readDataFromCsvToDf(self, filename=None, filepath=myconfig.TRAIN_DATA_FILE, verbose=False):

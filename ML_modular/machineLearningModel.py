@@ -311,7 +311,7 @@ class MachineLearningModel:
         print("\nModel saved to file:", filepath)
         return None
 
-
+    @staticmethod
     def loadModelFromFile(filepath=myconfig.MODEL_FILE):
         """load the model from disk"""
         print("\nLoad model from file:", filepath)
