@@ -10,12 +10,14 @@
 - Assess and visualize model score and fit 
 - Store ml model
 - build Python class to wrap model generation
+  <br> <---- here ----> <br>
+- Overfitting?
 
-<---- here ----> 
 
 ### Optimize model in procedure
 - __Prediction with ml model__ on new data
-- Use __Optimization algo__ to generate pareto front on ML model predictions
+- Use __Optimization algo__ to generate (pareto front) best candidate on ML model  
+  - newLabel = opitmizer(algo="nga2", data=(myModel.predict(selber werte bereich ))
 - Visualize pareto front
 
 ### Evaluate pareto candidates
@@ -31,3 +33,16 @@
 - more ML models
 - higher dimensional problem 
 - use different optimization algos 
+- apply finished ALS to different test/standard problems 
+  - https://en.wikipedia.org/wiki/Test_functions_for_optimization 
+- NN einbauen -> problem von Harry verwendent CNN mit Keras (später wenn Zeit)
+- CNN einbauen (später wenn Zeit)
+
+
+## Forschungsfragen ?
+- Benefit von ALS gegenbüber herkömmllicher optimierung 
+- Anzahl von teuren Funktionsaufrufen/-auswertungen bei problem optimierung VS. reine optimierungs sw
+- extra: wenn es rein passt... Machen die ursprünglichen Trainingsdaten einen unterschied im ALS?
+  - haben wir ein bias?
+  - kann sich das bias weg lernen?
+- 

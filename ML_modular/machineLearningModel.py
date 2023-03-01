@@ -3,15 +3,13 @@
 Class for MachineLearning model which wraps the model functions and thus provides a clearn UI. 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import os
-
 import joblib
 import numpy as np
 import pandas as pd
 import ml_helpers as helper
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LinearRegression, Lasso, Ridge, SGDRegressor
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import mean_squared_error
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import make_scorer, mean_absolute_error
@@ -20,8 +18,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
-
-import myconfig
+import myconfig     # project specific configurations
 
 
 class MachineLearningModel:
@@ -29,18 +26,18 @@ class MachineLearningModel:
         """ A class for building and training machine learning models using scikit-learn. """
 
         # model attributes
-        self.normalize = None           # BOOLEAN value
-        self.scaler = None              # type of normalization
+        self.normalize = None           # BOOLEAN value if data will be standarized
+        self.scaler_X = None            # standardization method for X dataframe
+        self.scaler_y = None            # standardization type for y dataframe
         self.model_type = None          # model object
-        self.prefix = None        # model type defines suffix of hyperparameters
-        self.preprocessor = None        # standardization, ...
+        self.prefix = None              # model type defines suffix of hyperparameters
         self.pipeline = None            # preprocessor + model type
-        self.scorer = None               # score function (MAE, MSE, ...)
+        self.scorer = None              # score function (MAE, MSE, ...)
         self.paramGrid = None           # hyperparameter grid for gridsearch
         self.grid_search_cv = None      # gridsearch with cv wrapping pipeline
         self.gscv_test_scores = None    # cross-validation test scores of gridsearch
-        self.testscore = None           # test score of best estimator
-        self.bestEstimator = None       # best estimator stored after training
+        self.testScore = None           # test score of best estimator
+        self.bestEstimator = None       # best estimator saved after training
 
         # Data storage
         self.df = None                  # initial data
@@ -69,7 +66,7 @@ class MachineLearningModel:
 
     def defineDataSplits(self, param_df, random_seed=42):
         """
-        Provide raw data stored in original df to Class.
+        Provide raw data saved in original df to Class.
         Split data into X_train, y_train, X_test, y_test (80/20 split)
         """
         self.df = param_df.copy()
@@ -86,7 +83,7 @@ class MachineLearningModel:
         self.X_test = X_test
         self.y_test = y_test
 
-        # Store train and test df (nice column names)
+        # Save train and test df (nice column names)
         self.train_df = self.X_train.assign(y=self.y_train)
         #print("\n\n----------------\n")
         #print(self.train_df)
@@ -99,7 +96,8 @@ class MachineLearningModel:
         return self.X_train, self.y_train, self.X_test, self.y_test, self.train_df, self.test_df
 
 
-    def defineScore(self, score_type):
+    #TODO: differnet scorers for hyperparameter search and training
+    def defineScorer(self, score_type):
         # It takes a score function, such as
         # ~sklearn.metrics.accuracy_score,
         # ~sklearn.metrics.mean_squared_error,
@@ -108,15 +106,40 @@ class MachineLearningModel:
 
         if score_type.lower() in ('mae', 'mean_absolute_error'):
             self.scorer = make_scorer(mean_absolute_error, greater_is_better=False)
-        elif score_type.lower() in ('support_vector_regression', 'svr'):
+        elif score_type.lower() in ('accuracy_score', 'acc'):
             self.scorer = make_scorer(accuracy_score)
+        elif score_type.lower() in ('root_mean_squared_error', 'rmse'): # higher weights for outliers
+            self.scorer = make_scorer(mean_squared_error) # TODO: needs root aswell (=RMSE)
+        # todo: R² is also interesting
         else:
             raise ValueError(f'Invalid score type: {score_type}')
 
 
+    # todo: check if transform only or fit as well for "fit_transform"
+    def preprocessData(self):
+        # define preprocessor
+        #print("\n\n", self.X_train)
+        #print("\n\n", self.X_test)
+
+        X_columns = []
+        for i in range(self.X_train.shape[1]):  # get number of columns
+            X_columns.append(f"x{i}")   # define column names
+
+        self.scaler_X = StandardScaler()  # standardscaler__
+        #self.scaler_y = StandardScaler()  # standardscaler__
+        # fit scaler to train data and transform train data
+        self.X_train = pd.DataFrame(self.scaler_X.fit_transform(self.X_train), columns=X_columns)
+        #self.y_train = pd.DataFrame(self.scaler_y.fit_transform(self.y_train), columns=['y'])
+        # transform test data
+        self.X_test = pd.DataFrame(self.scaler_X.transform(self.X_test), columns=X_columns)
+        #self.y_test = pd.DataFrame(self.scaler_y.transform(self.y_test), columns=['y'])
+        #print("\n\n", self.X_train)
+        #print("\n\n", self.X_test)
+
+
     def createPipeline(self, model_name, normalize=False):
         """
-        Create Pipeline to easily configure estimator
+        Create Pipeline according to input parameters
         - preprocessor
         - model type
         """
@@ -129,22 +152,27 @@ class MachineLearningModel:
             self.model_type = SVR()
         else:
             raise ValueError(f'Invalid model type: "{model_name}"')
-        print("model_type:", self.model_type)
+        print("model_type:", self.model_type, "\n")
 
         # define preprocessing, scaler, encoder, ...
-        if normalize:
-            self.preprocessor = StandardScaler()  # standardscaler__
+        self.normalize = normalize
+        print("Normalize data:", self.normalize)
+        if self.normalize:
+            self.preprocessData()
 
         # create pipeline
-        self.pipeline = make_pipeline(self.preprocessor, self.model_type)
-        # store model suffix for hyperparameters
+        self.pipeline = make_pipeline(self.scaler_X, self.model_type)
+        # save model suffix for hyperparameters
         self.prefix = str(self.pipeline).split("'")[-2] + "__"
+
 
     def getPipeline(self):
         return self.pipeline
 
+
     def getModelSuffix(self):
         return self.prefix
+
 
     def defineParamGrid(self, param_grid):
         """ Define hyperparameters for grid search """
@@ -173,23 +201,20 @@ class MachineLearningModel:
             estimator=self.pipeline,    # fresh estimator
             param_grid=self.paramGrid,  # grid of hyperparameters
             n_jobs=-1,                  # jobs to run in parallel (-1 uses all processes available)
-            scoring=self.scorer,         # using a callable to score each model
+            scoring=self.scorer,        # using a callable to score each model
             cv=5,                       # k-fold cross validation (default=5)
             verbose=1
         )
         self.grid_search_cv = grid_search
 
-        X_train = self.X_train
-        if self.normalize:
-            X_train = self.scaler.fit_transform(self.X_train)
-
         # TRAIN: fit the newly established model with data
-        self.grid_search_cv.fit(X_train, self.y_train)
+        print("\nStart training model:")
+        self.grid_search_cv.fit(self.X_train, self.y_train)
 
         # TEST: Cross-validation of gridsearch with TEST data
         self.gscv_test_scores = cross_val_score(self.grid_search_cv, self.X_test, self.y_test)
 
-        # Store best estimator in class attribute
+        # save the best estimator in class attribute
         self.bestEstimator = self.grid_search_cv.best_estimator_
 
         # table of k cross validation results
@@ -202,15 +227,15 @@ class MachineLearningModel:
             helper.printSimplifiedTable(self.tr_df_slim)
 
 
-    def storeDfToTemporaryFile(self, df=None):
-        """ Store the most important train results in a separate file  """
+    def saveDfToTemporaryFile(self, df=None):
+        """ Save the most important train results in a separate file  """
         if df is None:
             df = self.tr_df_slim
-        # store the dataframe with results to a separate csv file
+        # save the dataframe with results to a separate csv file
         filepath = myconfig.TMP_TABLE_FILE
         dirpath = myconfig.TMP_TABLE_DIR
-        print(filepath)
-        print(dirpath)
+        #print(filepath)
+        #print(dirpath)
         # assert folder exists
         os.makedirs(dirpath, exist_ok=True)
         # Write dataframe to CSV file and overwrite existing file
@@ -222,9 +247,9 @@ class MachineLearningModel:
     def getTestScore(self, X_test=None, y_test=None):
         """
         Get the prediction score of the best estimator on the TEST dataset.
-        Input of X_test, y_test is optional. Default is stored in class already.
+        Input of X_test, y_test is optional. Default is saved in class already.
         """
-        if self.testscore is None:
+        if self.testScore is None:
             if X_test is None:
                 X_test = self.X_test
             if y_test is None:
@@ -232,7 +257,7 @@ class MachineLearningModel:
             bestModel_testScore = self.bestEstimator.score(X_test, y_test)
             return round(bestModel_testScore, 3)
         else:
-            return round(self.testscore, 3)
+            return round(self.testScore, 3)
 
 
     def getAllCvTestScores(self):
@@ -253,23 +278,26 @@ class MachineLearningModel:
     def predict(self, X_test=None, verbose=False):
         """
         Make predictions using the trained machine learning model.
-        Input of X_test is optional. Default is stored in Class already.
+        Input of X_test is optional. Default is saved in Class already.
         """
         if X_test is None:
             X_test = self.X_test
-        if self.normalize:
-            X_test = self.scaler.transform(X_test)
+
         # Predict on dataset
         y_pred = self.grid_search_cv.best_estimator_.predict(X_test)
+        #print("\n\n----------------\n")
+        #print(y_pred)
+        if self.normalize:
+            scaler = self.scaler_X
+            y_pred = pd.DataFrame(scaler.inverse_transform(y_pred), columns=['y'])  # transform back
+        #print("\n\n----------------\n")
+        #print(y_pred)
         self.pred_df = pd.DataFrame(y_pred, columns=["y_pred"])
 
-        # Store combined dataframe for later plotting
-        #print("\n\n----------------\n")
-        #print(self.pred_df)
+        # Save combined dataframe for later plotting
         X_test_copy = self.X_test.copy().reset_index(drop=True)  # reset index of this copy only which was shuffled for model training
         self.predXtest_df = X_test_copy.assign(y=self.pred_df)
-        #print("\n\n----------------\n")
-        #print(self.predXtest_df)
+
         if verbose:
             print("y_pred:\n", self.pred_df)
         return self.pred_df, self.predXtest_df
@@ -284,7 +312,6 @@ class MachineLearningModel:
         return None
 
 
-    @staticmethod
     def loadModelFromFile(filepath=myconfig.MODEL_FILE):
         """load the model from disk"""
         print("\nLoad model from file:", filepath)

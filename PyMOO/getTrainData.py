@@ -20,15 +20,15 @@ def main(n=N, seed=SEED, problem_name=PROBLEM_NAME, deleteOldData=False):
 
     # Define random input values
     train_x = helper.createRandomInputValue(problem, seed, n)
-    print("\nX:\n", train_x)
+    #print("\nX:\n", train_x)
 
     # Compute according output values
     train_y = helper.computeOutputValues(train_x, problem)
-    print("\ny:\n", train_y)
+    #print("\ny:\n", train_y)
 
     # Merge Dataframes
     df = helper.concatenateDataframes(train_x, train_y)
-    print("\nCombined df:\n", df)
+    #print("\nCombined df:\n", df)
 
     # Store df in csv file
     helper.storeDfInCsvFile(df, problem, deleteOldData)

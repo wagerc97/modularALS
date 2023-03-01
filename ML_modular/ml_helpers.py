@@ -50,6 +50,7 @@ def save_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
         plt.tight_layout()
     plt.savefig(path, format=fig_extension, dpi=resolution)
 
+
 def defineNormalEquation(verbose=False, n=100):
     """ Defines a normal equation with n=100 """
     print("Defining Normal Equation with n =", n)
@@ -93,7 +94,7 @@ def plot1D(X, y, saveFileWithName=None):
 #################################
 
 def readDataFromCsvToDf(filepath=myconfig.TRAIN_DATA_FILE, verbose=False):
-    """ Read in data training data from csv-file and store it in dataframe. """
+    """ Read in data training data from csv-file and save it in dataframe. """
     # get data
     data = pd.read_csv(filepath, sep=';', header=1)
     # get problem name from first line
@@ -136,12 +137,10 @@ def plotRawData(df, title=""):
     return None
 
 def printSimplifiedTable(ptable):
-    print("+--------------------------------------------------------+")
-    print("\nNumber of columns in table:", len(ptable))
-    print("==========================================================")
+    print("\n+--------------------------------------------------------+")
     pd.set_option('display.max_columns', None) # print all columns
     print(ptable.drop(ptable.filter(regex='time|split|params|std_|param_').columns, axis=1).sort_values("rank_test_score").head())
-    print("+--------------------------------------------------------+")
+    print("+--------------------------------------------------------+\n")
     return None
 
 
@@ -194,13 +193,16 @@ def saveModelToFile(model, filepath=myconfig.MODEL_FILE):
     print("\nModel saved to file:", filepath)
     return None
 
-def loadModelFromFile(X_test, y_test, filepath=myconfig.MODEL_FILE):
+
+def loadModelFromFile(filepath=myconfig.MODEL_FILE):
     """load the model from disk"""
     print("\nLoad model from file:", filepath)
     loadedModel = joblib.load(filepath)
-    testScore = loadedModel.score(X_test, y_test)
-    return loadedModel, testScore
+    return loadedModel
 
 
+def getTestScore(model, X_test, y_test):
+    """ compute score of model on test data """
+    return round(model.score(X_test, y_test), 3)
 
 

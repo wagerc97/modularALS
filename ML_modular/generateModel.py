@@ -30,9 +30,9 @@ def main():
 
     ### split data into train and test set ###
     myModel.defineDataSplits(df)
-    X_train, y_train, X_test, y_test, train_df, _ = myModel.getDataSplits()
+    X_train, y_train, _, _, train_df, _ = myModel.getDataSplits()
     print("\nX_train.head():\n", X_train.head())
-    print("\ny_train.head():\n", y_test.head())
+    print("\ny_train.head():\n", y_train.head())
 
     ### Plot Train data ###
     print("\nTrain df:\n", myModel.train_df)
@@ -40,12 +40,13 @@ def main():
 
     ### Define score ###
     # [ mae, ... ]
-    myModel.defineScore("mae")
+    myModel.defineScorer("mae")
 
     ### Create Pipeline to easily configure estimator ###
     # [ krr, svr,... ]
     MODEL = "krr"
-    myModel.createPipeline(MODEL, normalize=True)
+    myModel.createPipeline(MODEL, normalize=False)
+    print("\nmodel pipeline:", myModel.getPipeline())
 
     ### Define hyperparameters for grid search ###
     if MODEL == "krr":
@@ -70,7 +71,6 @@ def main():
 
     ### Train model pipeline in Gridsearch with CV ###
     myModel.applyGridSearchCV(verbose=True)
-    print(f"Trained GridsearchCV object:\n{myModel.grid_search_cv}\n")
 
     ### Get best model ###
     print(f"Best train score: {round(myModel.grid_search_cv.best_score_, 3)}") # Mean cross-validated score of the best_estimator during training
@@ -82,20 +82,20 @@ def main():
     print("TEST score of best model:", myModel.getTestScore()) #> 0.997
 
     ### Plot prediction against train data ####
-    myModel.predict(X_test=X_test)
+    myModel.predict(X_test=myModel.X_test)
     myModel.plotPredictionAndTrainData(title="Prediction vs train")
 
-    ### Store best model in external file ###
+    ### Save best model in external file ###
     myModel.saveModelToFile()
 
-    ### Store train results in file ###
-    myModel.storeDfToTemporaryFile()
+    ### Save train results in file ###
+    myModel.saveDfToTemporaryFile()
 
     ### Load model from file ###
     loadedModel = myModel.loadModelFromFile()
     print("Loaded model:\n", loadedModel)
 
-    testScore = myModel.getTestScore(X_test)
+    testScore = myModel.getTestScore(myModel.X_test)
     print("Model test score: ", round(testScore, 3))
 
 
