@@ -2,13 +2,10 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 Class for MachineLearning model which wraps the model functions and thus provides a clearn UI. 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-import csv
 import os
-import numpy as np
+import csv
 import pandas as pd
-import ml_helpers as helper
-import matplotlib.pyplot as plt
-import myconfig     # project specific configurations
+import myconfig as cfg     # project specific configurations
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
@@ -28,10 +25,6 @@ class DataHandler:
         self.predXtest_df = None        # Dataframe with X_test and y_pred
 
 
-    def __str__(self):
-        """ Allows printing information about the model """
-        return None
-
     def setDataframe(self, df):
         self.df = df
 
@@ -45,14 +38,13 @@ class DataHandler:
         self.defineDataSplits(self.df)
 
 
-    def kickStartFromFile(self, filename=None, filepath=myconfig.TRAIN_DATA_FILE, verbose=False):
+    def kickStartFromFile(self, filename=None, filepath=cfg.DATA_FILE, verbose=False):
         """ Read in data from file and define test- and trainsplits """
         # get data from CSV file
         _ = self.readDataFromCsvToDf(filename, filepath, verbose)
 
         # Define data splits (train and test)
         self.defineDataSplits(self.df)
-
 
 
     def defineDataSplits(self, param_df, random_seed=42):
@@ -87,34 +79,12 @@ class DataHandler:
         return self.X_train, self.y_train, self.X_test, self.y_test, self.train_df, self.test_df
 
 
-    # todo: check if transform only or fit as well for "fit_transform"
-    def preprocessData(self):
-        # define preprocessor
-        #print("\n\n", self.X_train)
-        #print("\n\n", self.X_test)
-
-        X_columns = []
-        for i in range(self.X_train.shape[1]):  # get number of columns
-            X_columns.append(f"x{i}")   # define column names
-
-        self.scaler_X = StandardScaler()  # standardscaler__
-        #self.scaler_y = StandardScaler()  # standardscaler__
-        # fit scaler to train data and transform train data
-        self.X_train = pd.DataFrame(self.scaler_X.fit_transform(self.X_train), columns=X_columns)
-        #self.y_train = pd.DataFrame(self.scaler_y.fit_transform(self.y_train), columns=['y'])
-        # transform test data
-        self.X_test = pd.DataFrame(self.scaler_X.transform(self.X_test), columns=X_columns)
-        #self.y_test = pd.DataFrame(self.scaler_y.transform(self.y_test), columns=['y'])
-        #print("\n\n", self.X_train)
-        #print("\n\n", self.X_test)
-
-
-    def readDataFromCsvToDf(self, filename=None, filepath=myconfig.TRAIN_DATA_FILE, verbose=False):
+    def readDataFromCsvToDf(self, filename=None, filepath=cfg.DATA_FILE, verbose=False):
         """ Read in data training data from csv-file and save it in dataframe. """
-        if filename is None:
-            file = myconfig.TRAIN_DATA_FILE_NAME
-        else:
-            file = os.path.join(myconfig.CONFIG_PATH, myconfig.MODEL_DIR, myconfig.TRAIN_DATA_FILE_NAME)
+        if filename is None and filepath is None:
+            filepath = cfg.DATA_FILE_NAME
+        if filepath is not None:
+            filepath = os.path.join(cfg.PROJECT_PATH, cfg.DATA_DIR, filename)
 
         # get data
         self.df = pd.read_csv(filepath, sep=';', header=1)
@@ -127,3 +97,26 @@ class DataHandler:
             print("csv filepath:", filepath)
             print(self.df)
         return problem_name
+
+
+    # todo: check if transform only or fit as well for "fit_transform"
+    def preprocessData(self, scaler_X, scaler_y):
+        # define preprocessor
+        #print("\n\n", self.X_train)
+        #print("\n\n", self.X_test)
+
+        X_columns = []
+        for i in range(self.X_train.shape[1]):  # get number of columns
+            X_columns.append(f"x{i}")   # define column names
+
+        scaler_X = StandardScaler()  # standardscaler__
+        #self.scaler_y = StandardScaler()  # standardscaler__
+        # fit scaler to train data and transform train data
+        self.X_train = pd.DataFrame(scaler_X.fit_transform(self.X_train), columns=X_columns)
+        #self.y_train = pd.DataFrame(scaler_y.fit_transform(self.y_train), columns=['y'])
+        # transform test data
+        self.X_test = pd.DataFrame(scaler_X.transform(self.X_test), columns=X_columns)
+        #self.y_test = pd.DataFrame(scaler_y.transform(self.y_test), columns=['y'])
+        #print("\n\n", self.X_train)
+        #print("\n\n", self.X_test)
+
