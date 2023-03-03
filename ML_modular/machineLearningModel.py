@@ -13,11 +13,10 @@ from sklearn.metrics import mean_squared_error
 from sklearn.svm import SVR
 from sklearn.metrics import make_scorer, mean_absolute_error
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
-from dataHandler import DataHandler     # inherit the dataHandling class elements
+from data.dataHandler import DataHandler     # inherit the dataHandling class elements
 import myconfig     # project specific configurations
 
 

@@ -85,7 +85,7 @@ class DataHandler:
             filepath = cfg.DATA_FILE_NAME
 
         if filepath is None and filename is not None:
-            filepath = os.path.join(".", filename)
+            filepath = os.path.join("..", filename)
 
         if filepath is not None and filename is not None:
             raise ValueError("Error: Either provide filename or whole filepath as argument.")

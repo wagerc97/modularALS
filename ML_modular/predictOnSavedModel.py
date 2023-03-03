@@ -5,7 +5,7 @@ Predict with saved ML model
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import ml_helpers as helper
-from dataHandler import DataHandler
+from data.dataHandler import DataHandler
 
 
 def main():
