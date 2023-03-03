@@ -79,12 +79,16 @@ class DataHandler:
         return self.X_train, self.y_train, self.X_test, self.y_test, self.train_df, self.test_df
 
 
-    def readDataFromCsvToDf(self, filename=None, filepath=cfg.DATA_FILE, verbose=False):
-        """ Read in data training data from csv-file and save it in dataframe. """
-        if filename is None and filepath is None:
+    def readDataFromCsvToDf(self, filename=None, filepath=None, verbose=False):
+        """ Read in data training data from csv-file and save it as dataframe in variable. """
+        if filepath is None and filename is None: # just default config
             filepath = cfg.DATA_FILE_NAME
-        if filepath is not None:
-            filepath = os.path.join(cfg.PROJECT_PATH, cfg.DATA_DIR, filename)
+
+        if filepath is None and filename is not None:
+            filepath = os.path.join(".", filename)
+
+        if filepath is not None and filename is not None:
+            raise ValueError("Error: Either provide filename or whole filepath as argument.")
 
         # get data
         self.df = pd.read_csv(filepath, sep=';', header=1)
@@ -101,6 +105,7 @@ class DataHandler:
 
     # todo: check if transform only or fit as well for "fit_transform"
     def preprocessData(self, scaler_X, scaler_y):
+        """ Preprocess data according to given scaler """
         # define preprocessor
         #print("\n\n", self.X_train)
         #print("\n\n", self.X_test)

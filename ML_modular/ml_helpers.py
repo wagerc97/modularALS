@@ -91,7 +91,7 @@ def plot1D(X, y, saveFileWithName=None):
         save_fig(saveFileWithName)
     plt.show()
 
-#################################
+########################################################################################################################
 
 def readDataFromCsvToDf(filepath=myconfig.DATA_FILE, verbose=False):
     """ Read in data training data from csv-file and save it in dataframe. """
@@ -135,6 +135,7 @@ def plotRawData(df, title=""):
     plt.title(title)
     plt.show()
     return None
+
 
 def printSimplifiedTable(ptable):
     print("\n+--------------------------------------------------------+")
@@ -182,15 +183,6 @@ def plotPredictionAndData(pred_df, train_df, title):
     plt.title(title)
     ax.legend()
     plt.show()
-    return None
-
-
-def saveModelToFile(model, filepath=myconfig.MODEL_FILE):
-    """save the model to disk"""
-    # make sure the file destination exists
-    os.makedirs(myconfig.MODEL_DIR, exist_ok=True)  # Make sure the directory exists
-    joblib.dump(model, filepath)
-    print("\nModel saved to file:", filepath)
     return None
 
 

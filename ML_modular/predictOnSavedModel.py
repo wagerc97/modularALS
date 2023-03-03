@@ -4,9 +4,7 @@
 Predict with saved ML model 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-import matplotlib.pyplot as plt # dont delete this
 import ml_helpers as helper
-from machineLearningModel import MachineLearningModel
 from dataHandler import DataHandler
 
 
@@ -21,7 +19,6 @@ def main():
     ### Load model from file ###
     loadedModel = helper.loadModelFromFile()
     print("Loaded model:\n", loadedModel)
-
 
     #testScore = helper.getTestScore(loadedModel, X_test, y_test)
     testScore = loadedModel.score(dataHandler.X_test, dataHandler.y_test)
