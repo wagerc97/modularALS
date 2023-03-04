@@ -52,7 +52,7 @@ class MachineLearningModel(DataHandler):
             return f"Chosen model: {type(self.model_type).__name__}"
 
 
-    #TODO: differnet scorers for hyperparameter search and training
+    #TODO: different scorers for hyperparameter search and training
     def defineScorer(self, score_type):
         # It takes a score function, such as
         # ~sklearn.metrics.accuracy_score,
@@ -287,7 +287,6 @@ class MachineLearningModel(DataHandler):
         plt.title(title)
         ax.legend()
         plt.show()
-        return None
 
 
 

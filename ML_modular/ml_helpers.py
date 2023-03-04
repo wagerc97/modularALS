@@ -138,10 +138,10 @@ def plotRawData(df, title=""):
 
 
 def printSimplifiedTable(ptable):
-    print("\n+--------------------------------------------------------+")
+    print("\n+--------------------------------------------+")
     pd.set_option('display.max_columns', None) # print all columns
     print(ptable.drop(ptable.filter(regex='time|split|params|std_|param_').columns, axis=1).sort_values("rank_test_score").head())
-    print("+--------------------------------------------------------+\n")
+    print("+--------------------------------------------+\n")
     return None
 
 

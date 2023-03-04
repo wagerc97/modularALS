@@ -31,8 +31,8 @@ def main():
     ### split data into train and test set ###
     myModel.defineDataSplits(df)
     X_train, y_train, _, _, train_df, _ = myModel.getDataSplits()
-    print("\nX_train.head():\n", X_train.head())
-    print("\ny_train.head():\n", y_train.head())
+    #print("\nX_train.head():\n", X_train.head())
+    #print("\ny_train.head():\n", y_train.head())
 
     ### Plot Train data ###
     print("\nTrain df:\n", myModel.train_df)

@@ -83,12 +83,13 @@ def createAlgorithm(algo):
     return algorithm
 
 
-def solver(problem, algorithm, iterations):
+def solver(problem, algorithm, iterations, verbose=False):
     """
     Create and solve a problem with a chosen algorithm
     :param problem: input problem
     :param algorithm: input algorithm
     :param iterations: number of steps towards optimal solution
+    :param verbose: if True print solution in each iteration
     :return:
     """
     # Define Result
@@ -96,7 +97,7 @@ def solver(problem, algorithm, iterations):
     res = minimize(problem,
                    algorithm,
                    ('n_gen', iterations),  # n_gen defines the number of iterations
-                   verbose=True  # prints out solution in each iteration
+                   verbose=verbose  # prints out solution in each iteration
                    )
     return problem, res
 
