@@ -14,7 +14,6 @@ from pymoo.visualization.fitness_landscape import FitnessLandscape  # allows ill
 import myconfig
 
 
-#import MyCallback
 
 #### Common error with tutorial ####
 # Error: Import error of get_problem

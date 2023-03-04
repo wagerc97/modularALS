@@ -7,8 +7,13 @@ Source: https://www.kaggle.com/code/wagerc97/aml-regression
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import matplotlib.pyplot as plt  # dont delete this
-import ml_helpers as helper
-from old.ML_procedural.machineLearningModel import MachineLearningModel
+import sys, os
+sys.path.append(os.path.abspath(os.path.join('.', 'ML_modular', 'test')))  # '.' for main in .../Optimization/main.py
+
+import ML_modular.ml_helpers as helper
+from ML_modular.old.ML_procedural.machineLearningModel import MachineLearningModel
+
+raise Exception("DEPRICATED")
 
 def runExample():
 

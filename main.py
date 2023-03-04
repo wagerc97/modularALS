@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join('.', 'PyMOO')))
 
 # Settings for procedure
 SEED = 42
-N = 234
+N = 66
 PROBLEM = "Rosenbrock"
 ALGORITHM = "nsga2"
 overWriteOldCsv = True
@@ -18,10 +18,6 @@ if __name__ == '__main__':
     testiamhere()
 
     ### Create Train Data ###
-    #import PyMOO.getTrainData2 as gtd
-    #gtd.main(n=N, seed=SEED, problem_name=PROBLEM, algorithm=ALGORITHM, deleteOldData=True)
-
-    ### Invoke a new instance of fresh data ###
     from PyMOO.freshData import FreshData
     inputData = FreshData(n=N,
                           seed=SEED,

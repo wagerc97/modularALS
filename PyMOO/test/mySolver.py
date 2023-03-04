@@ -8,8 +8,10 @@ Example Usage from PyMOO documentation:
 Note: 
 - this project uses its own Python 3.10 interpreter
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+import sys, os
+sys.path.append(os.path.abspath(os.path.join('.', 'PYMOO', 'test')))  # '.' for main in .../Optimization/main.py
 
-import pymoo_helpers as helper
+import PyMOO.pymoo_helpers as helper
 
 
 if __name__ == '__main__':
