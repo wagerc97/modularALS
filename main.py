@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join('.', 'PyMOO')))
 
 # Settings for procedure
 SEED = 42
-N = 66
+N = 200
 PROBLEM = "Rosenbrock"
 ALGORITHM = "nsga2"
 overWriteOldCsv = True
@@ -18,12 +18,12 @@ if __name__ == '__main__':
     testiamhere()
 
     ### Create Train Data ###
-    from PyMOO.freshData import FreshData
-    inputData = FreshData(n=N,
-                          seed=SEED,
-                          problem_name=PROBLEM,
-                          algorithm_name=ALGORITHM,
-                          deleteOldData=overWriteOldCsv)
+    from PyMOO.dataGenerator import DataGenerator
+    inputData = DataGenerator(n=N,
+                              seed=SEED,
+                              problem_name=PROBLEM,
+                              algorithm_name=ALGORITHM,
+                              deleteOldData=overWriteOldCsv)
 
     ### Generate random X data, compute labels and store as new CSV file ###
     inputData.kickStartCsvFileGeneration(plotData=True)
@@ -34,6 +34,6 @@ if __name__ == '__main__':
     gml.main()
 
     ### Predict with saved model ###
-    #import ML_modular.predictOnSavedModel as psml
-    #psml.main()
+    import ML_modular.predictOnSavedModel as psml
+    psml.main()
 

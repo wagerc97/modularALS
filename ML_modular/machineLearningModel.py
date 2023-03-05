@@ -154,11 +154,43 @@ class MachineLearningModel(DataHandler):
         # table of k cross validation results
         self.train_result_df = pd.DataFrame(grid_search.cv_results_).sort_values("rank_test_score")
 
-        # Only interesting columns, rounded to 2 decimals, and only the first 5 rows
-        self.tr_df_slim = self.train_result_df.drop(self.train_result_df.filter(regex='split|params|std_fit_time|std_score_time').columns, axis=1).head().round(decimals=2)
+        # Only interesting columns, rounded to 2 decimals, and only the first 5 rows, shorter header names
+        #self.tr_df_slim = self.train_result_df.drop(self.train_result_df.filter(regex='split|params|std_fit_time|std_score_time').columns, axis=1).head().round(decimals=2)
+        self.simplifyResultDf()
 
         if verbose:
-            helper.printSimplifiedTable(self.tr_df_slim)
+            self.printSimplifiedTable(self.tr_df_slim)
+
+
+    def simplifyResultDf(self):
+        """ Adapt and save slimmer version of result-dataframe
+        -> Only interesting columns, rounded to 2 decimals, and only the first 5 rows, shorter header names
+        self.train_result_df is the full result df
+        self.tr_df_slim is the simplified version this function creates
+        :return:
+        """
+        ptable = self.train_result_df
+        # filter out columns
+        ptable = ptable.drop(ptable.filter(regex='split|params|std_fit_time|std_score_time').columns, axis=1)
+        # sort and show only head
+        ptable = ptable.sort_values("rank_test_score").head()
+        # round results
+        ptable = ptable.round(decimals=2)
+        # replace words in header with regex
+        ptable.columns = ptable.columns.str.replace(rf"(param_|{self.prefix})", "")
+        self.tr_df_slim = ptable
+
+
+    def printSimplifiedTable(self, ptable):
+        """ Print simplified table of train results for model """
+        print("\n+--------------------------------------------------------+")
+        print("Number of columns in table:", len(ptable))
+        print("==========================================================")
+        # print all columns
+        pd.set_option('display.max_columns', None)
+        self.simplifyResultDf()
+        print(ptable)
+        print("+--------------------------------------------------------+\n")
 
 
     def saveDfToTemporaryFile(self, df=None):
@@ -169,14 +201,12 @@ class MachineLearningModel(DataHandler):
             filepath = myconfig.TMP_TABLE_FILE
         else:
             filepath = os.path.join(dirpath, "newDataframe.csv")
-        #print(filepath)
-        #print(dirpath)
         # assert folder exists
         os.makedirs(dirpath, exist_ok=True)
         # Write dataframe to CSV file and overwrite existing file
         df.to_csv(filepath, index=False, mode='w', sep=';')
         print("\nResults were saved to file:", filepath)
-        return None
+
 
 
     def getTestScore(self, X_test=None, y_test=None):

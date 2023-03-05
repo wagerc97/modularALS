@@ -15,16 +15,16 @@ def testiamhere():
 
 
 # Training data
-DATA_DIR = os.path.join(PROJECT_PATH, "data")
 DATA_FILE_NAME = "data.csv"
+DATA_DIR = os.path.join(PROJECT_PATH, "data")
 DATA_FILE = os.path.join(PROJECT_PATH, "data", DATA_FILE_NAME)
 
 # Storing model
-MODEL_DIR = os.path.join(PROJECT_PATH, "ML_modular", "models")
 MODEL_FILE_NAME = "final_model.sav"
+MODEL_DIR = os.path.join(PROJECT_PATH, "ML_modular", "models")
 MODEL_FILE = os.path.join(PROJECT_PATH, "ML_modular", "models", MODEL_FILE_NAME)
 
 # Temporary table
-TMP_TABLE_DIR = os.path.join(PROJECT_PATH, "ML_modular", "tables")
 TMP_TABLE_FILE_NAME = "tmp_result_table.csv"
+TMP_TABLE_DIR = os.path.join(PROJECT_PATH, "ML_modular", "tables")
 TMP_TABLE_FILE = os.path.join(PROJECT_PATH, "ML_modular", "tables", TMP_TABLE_FILE_NAME)

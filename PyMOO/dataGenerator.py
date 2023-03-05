@@ -13,7 +13,7 @@ from pymoo.visualization.fitness_landscape import FitnessLandscape  # allows ill
 import myconfig
 
 
-class FreshData:
+class DataGenerator:
     def __init__(self, n, problem_name, seed=42, deleteOldData=True, algorithm_name='nsga2', **kwargs):
         """
         A class for generating, expanding and storing new data for training and prediction.
@@ -222,8 +222,8 @@ class FreshData:
         self.createProblem()
         self.generateRandomX()
         self.computeLabels()
-        self.storeDfInCsvFile()
         if plotData:
-            self.plotNewData(title="New data")
+            self.storeDfInCsvFile()
+        self.plotNewData(title="New data")
 
 
