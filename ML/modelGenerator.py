@@ -20,7 +20,7 @@ from data.dataHandler import DataHandler     # inherit the dataHandling class el
 import myconfig     # project specific configurations
 
 
-class MachineLearningModel(DataHandler):
+class ModelGenerator(DataHandler):
     def __init__(self, **kwargs):
         """ A class for building and training machine learning models using scikit-learn. """
 

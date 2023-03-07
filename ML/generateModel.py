@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.metrics import r2_score
 
 import ml_helpers as helper
-from machineLearningModel import MachineLearningModel
+from modelGenerator import ModelGenerator
 
 
 def main():
@@ -28,7 +28,7 @@ def main():
     helper.plotRawData(df, title="original df")
 
     ### Create a model of choice ###
-    myModel = MachineLearningModel()
+    myModel = ModelGenerator()
     print(myModel)
 
     ### split data into train and test set ###

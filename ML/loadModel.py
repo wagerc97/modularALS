@@ -7,12 +7,12 @@ Source: https://www.kaggle.com/code/wagerc97/aml-regression
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import matplotlib.pyplot as plt # dont delete this
 import ml_helpers as helper
-from machineLearningModel import MachineLearningModel
+from modelGenerator import ModelGenerator
 
 
 def main():
 
-    myModel = MachineLearningModel()
+    myModel = ModelGenerator()
 
     ### Load model from file ###
     loadedModel = myModel.loadModelFromFile()

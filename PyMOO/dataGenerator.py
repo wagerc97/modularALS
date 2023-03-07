@@ -74,7 +74,7 @@ class DataGenerator:
         # FitnessLandscape(problem, _type="contour", colorbar=True).show()
 
 
-    def createProblem(self):
+    def createProblem(self, plotProblem=False):
         if self.problem_name.lower() in ("zakharov", "zdt1", "z"):
             from pymoo.problems.multi import ZDT1
             # https://pymoo.org/problems/single/zakharov.html
@@ -83,7 +83,8 @@ class DataGenerator:
             from pymoo.problems.single import Rosenbrock
             # https://pymoo.org/problems/single/rosenbrock.html
             self.problem = Rosenbrock(n_var=2)
-            self.showFitnessLandscape()
+            if plotProblem:
+                self.showFitnessLandscape()
 
         else:
             raise Exception("Enter one problem_name of { Zakharov, Rosenbrock }")
@@ -252,7 +253,7 @@ class DataGenerator:
         self.generateRandomX()
         self.computeLabels()
         if plotData:
-            self.plotNewData(title=f"Newly generated data (generator mode is '{self.mode}')")
+            self.plotNewData(title=f"Newly generated data with mode='{self.mode}'")
         self.storeDfInCsvFile()
 
 

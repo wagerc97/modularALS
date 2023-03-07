@@ -3,7 +3,7 @@
 from myconfig import *
 import sys
 # Bring your packages onto the path
-sys.path.append(os.path.abspath(os.path.join('.', 'ML_modular')))  # '.' for main in .../Optimization/main.py
+sys.path.append(os.path.abspath(os.path.join('.', 'ML')))  # '.' for main in .../Optimization/main.py
 sys.path.append(os.path.abspath(os.path.join('.', 'PyMOO')))
 
 # Settings for procedure
@@ -19,21 +19,21 @@ if __name__ == '__main__':
     print("\n\n=====================================================================\n")
     print(">>> Generate new train data <<<\n")
     from PyMOO.dataGenerator import DataGenerator
-    inputData = DataGenerator(mode="train",
-                              n=N,
-                              seed=SEED,
-                              problem_name=PROBLEM,
-                              algorithm_name=ALGORITHM,
-                              overwrite=overWriteOldCsvData)
+    inputDataGenerator = DataGenerator(mode="train",
+                                       n=N,
+                                       seed=SEED,
+                                       problem_name=PROBLEM,
+                                       algorithm_name=ALGORITHM,
+                                       overwrite=overWriteOldCsvData)
 
     ### Generate random X data, compute labels and store as new CSV file ###
-    inputData.generateCsvFileWithNewInputX(plotData=True)
+    inputDataGenerator.generateCsvFileWithNewInputX(plotData=True)
 
 
     ### Create, train, evaluate and store ml model ###
     print("\n\n=====================================================================\n")
     print(">>> Generate and train ML model <<<\n")
-    import ML_modular.generateModel as gml
+    import ML.generateModel as gml
     gml.main()
 
 
@@ -44,12 +44,12 @@ if __name__ == '__main__':
     predDataGenerator = DataGenerator(mode="predict")
 
     ### Generate input data X ###
-    predDataGenerator.generateCsvFileWithNewInputX()
+    predDataGenerator.generateCsvFileWithNewInputX(plotData=True)
 
 
     ### Predict with saved model ###
     print("\n\n=====================================================================\n")
     print(">>> Predict on new data <<<\n")
-    import ML_modular.predictOnSavedModel as psml
+    import ML.predictOnSavedModel as psml
     psml.main()
 

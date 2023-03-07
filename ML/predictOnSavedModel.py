@@ -12,10 +12,10 @@ import myconfig as cfg
 def main():
 
     ### invoke a new instance of DataHandler ###
-    predData = DataHandler()
+    predictionInputData = DataHandler()
 
     ### provide data from csv file ###
-    predData.readAndSplitFromFile(cfg.PRED_DATA_FILE)
+    predictionInputData.readAndSplitFromFile(cfg.PRED_DATA_FILE)
     #todo: remove split for prediction
 
     ### Load model from file ###
@@ -24,8 +24,8 @@ def main():
 
     #testScore = helper.getTestScore(loadedModel, X_test, y_test)
     #testScore = loadedModel.score(predData.X_test, predData.y_test)
-    pred_y = loadedModel.predict(predData.X_test)
-    testScore = r2_score(y_true=predData.y_test, y_pred=pred_y)
+    pred_y = loadedModel.predict(predictionInputData.X_test)
+    testScore = r2_score(y_true=predictionInputData.y_test, y_pred=pred_y)
     print("Model test score (R²): ", round(testScore, 3))
 
 
