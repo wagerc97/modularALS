@@ -17,11 +17,11 @@ def testiamhere():
 ### The data directory ###
 DATA_DIR = os.path.join(PROJECT_PATH, "data")
 # Training data (to train model with)
-TRAIN_DATA = "train.csv"
-TRAIN_DATA_FILE = os.path.join(PROJECT_PATH, "data", TRAIN_DATA)
+TRAIN_DATA_NAME = "train.csv"
+TRAIN_DATA_FILE = os.path.join(PROJECT_PATH, "data", TRAIN_DATA_NAME)
 # Test data (to predict on)
-PRED_DATA = "pred.csv"
-PRED_DATA_FILE = os.path.join(PROJECT_PATH, "data", PRED_DATA)
+PRED_DATA_NAME = "pred.csv"
+PRED_DATA_FILE = os.path.join(PROJECT_PATH, "data", PRED_DATA_NAME)
 
 # Storing model
 MODEL_FILE_NAME = "final_model.sav"
@@ -32,3 +32,7 @@ MODEL_FILE = os.path.join(PROJECT_PATH, "ML_modular", "models", MODEL_FILE_NAME)
 TMP_TABLE_FILE_NAME = "tmp_result_table.csv"
 TMP_TABLE_DIR = os.path.join(PROJECT_PATH, "ML_modular", "tables")
 TMP_TABLE_FILE = os.path.join(PROJECT_PATH, "ML_modular", "tables", TMP_TABLE_FILE_NAME)
+
+# Datagenerator modes
+_modeTRAIN = "train"
+_modePREDICT = "predict"

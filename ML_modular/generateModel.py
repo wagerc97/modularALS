@@ -6,6 +6,9 @@ Source: https://www.kaggle.com/code/wagerc97/aml-regression
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import matplotlib.pyplot as plt # dont delete this
+import pandas as pd
+from sklearn.metrics import r2_score
+
 import ml_helpers as helper
 from machineLearningModel import MachineLearningModel
 
@@ -16,7 +19,7 @@ def main():
     helper.assertRequirements()
 
     ### Set up M L model environment ###
-    helper.mlSetup()
+    #helper.mlSetup()
 
     ### Read data from csv to new df ###
     df, problem_name = helper.readDataFromCsvToDf(verbose=False)
@@ -96,8 +99,20 @@ def main():
     loadedModel = myModel.loadModelFromFile()
     print("Loaded model:\n", loadedModel)
 
-    testScore = myModel.getTestScore(myModel.X_test)
-    print("Model test score: ", round(testScore, 3))
+    ### Compute model score ###
+    testScoreFromFunction = myModel.getTestScore(myModel.X_test)
+    print("Model test score from function (R²): ", round(testScoreFromFunction, 3))
+
+    """ Here, I compared the score functions """
+    #best_estimator = myModel.getBestEstimator()
+    #pred_y = best_estimator.predict(myModel.X_test)
+    #pred_y = pd.DataFrame(pred_y, columns=["y"])
+    #print("\n\n")
+    #print(myModel.y_test)
+    #print("\n")
+    #print(pred_y)
+    #testScore = r2_score(y_true=myModel.y_test, y_pred=pred_y)
+    #print("Model test score from r2_score (R²): ", round(testScore, 3))
 
 
 

@@ -14,16 +14,19 @@ import myconfig
 
 
 class DataGenerator:
-    def __init__(self, n, problem_name, seed=42, deleteOldData=True, algorithm_name='nsga2', **kwargs):
+    def __init__(self, mode, n=100, problem_name="Rosenbrock", seed=42, overwrite=True, algorithm_name='nsga2', **kwargs):
         """
         A class for generating, expanding and storing new data for training and prediction.
         # Chose a problem
         # - SOO: Rosenbrock (x1, x2, y)      (n_var: 2, n_obj: 1, n_constr: 0) -> solution is one single point
         # - MOO: Zakharov   (x1, x2, y1, y2) (n_var: 2, n_obj: 2, n_constr: 0) -> solution is pareto front in 2D
         """
+        self.mode = None                        # defines what kind of data will be generated
+        self.csvFileName = None                 # file name of resulting csv file
+        self.csvFilePath = None                 # file path of resulting csv file
         self.n = n                              # number of data points
         self.seed = seed                        # random seed
-        self.deleteOldData = deleteOldData      # Boolean: if True overwrite old data csv file
+        self.overwrite = overwrite              # Boolean: if True overwrite old data csv file
         self.problem_name = problem_name        # name of problem given as parameter
         self.problem = None                     # Pymoo problem object
         self.algorithm_name = algorithm_name    # nsga2 is default
@@ -34,6 +37,28 @@ class DataGenerator:
         self.X = None                           # input matrix
         self.y = None                           # labels
         self.df = None                          # combined dataframe [ X | y ]
+
+        # Validation
+        self.validateMode(mode)           # set self.mode according to given mode parameter
+
+
+    def validateMode(self, param_mode, verbose=True):
+        """ Set self.mode according to given mode parameter """
+        if param_mode in ("t", "train", "training"):
+            self.mode = myconfig._modeTRAIN
+            self.csvFileName = myconfig.TRAIN_DATA_NAME
+            self.csvFilePath = myconfig.TRAIN_DATA_FILE
+        elif param_mode in ("p", "pred", "predict", "prediction", "predicting"):
+            self.mode = myconfig._modePREDICT
+            self.csvFileName = myconfig.PRED_DATA_NAME
+            self.csvFilePath = myconfig.PRED_DATA_FILE
+            self.seed += 1  # alter the random seed to generate new unseen data
+        else:
+            raise ValueError(f"DataGenerator received invalid mode: '{param_mode}'. Needs to be 'train' or 'predict'")
+        if verbose:
+            print("csvFileName:", self.csvFileName)
+            print("csvFilePath:", self.csvFilePath)
+            print("seed:", self.seed)
 
 
     def showFitnessLandscape(self):
@@ -139,7 +164,7 @@ class DataGenerator:
         np.random.seed(self.seed)  # Set the random seed to 42
         df_dict = {}  # dataframe dictionary will store the columns temporarily
         for i in range(1, n_cols + 1):
-            print(f"randomly draw column: x{i}")
+            print(f"randomly draw numbers for problem input (column x{i})")
             # Generate n random numbers between the specified lower and upper bounds using the uniform() function
             x = np.random.uniform(low=self.lower, high=self.upper, size=self.n)
             # add new column to dataframe dictionary
@@ -149,7 +174,7 @@ class DataGenerator:
 
 
     def concatenateDataframes(self, x, y):
-        """ Merge Dataframes and store in new dataframe to use with ml model"""
+        """ Merge Dataframes and store in new dataframe to use with ml model """
         x_df = pd.DataFrame(x)
         frames = [x_df, y]
         combined_df = pd.concat(frames, axis=1)
@@ -177,20 +202,20 @@ class DataGenerator:
         os.makedirs(myconfig.DATA_DIR, exist_ok=True)
         # delete old train data file if True
         try:
-            if self.deleteOldData:
-                os.remove(myconfig.TRAIN_DATA_FILE)
+            if self.overwrite:
+                os.remove(self.csvFilePath)
         except Exception as e:
             print(str(e))
         # write df to new csv file and delete old content
-        self.df.to_csv(myconfig.TRAIN_DATA_FILE, encoding='utf-8',
+        self.df.to_csv(self.csvFilePath, encoding='utf-8',
                        index=False,  # False: without index
                        sep=";")     # custom seperator
         # add problem name in first line
-        with open(myconfig.TRAIN_DATA_FILE, "r+") as f:
+        with open(self.csvFilePath, "r+") as f:
             file_data = f.read()
             f.seek(0, 0)  # get the first line
             f.write(str(self.problem.name()) + '\n' + file_data)
-        print(f"Successfully stored {self.problem.name()}-data to location:", myconfig.TRAIN_DATA_FILE)
+        print(f"Successfully stored {self.problem.name()}-data to location:", self.csvFilePath)
 
 
     def plotNewData(self, title=""):
@@ -220,13 +245,14 @@ class DataGenerator:
         plt.title(title)
         plt.show()
 
-    def kickStartCsvFileGeneration(self, plotData=False):
+
+    def generateCsvFileWithNewInputX(self, plotData=False):
         """ Generate random X data, compute labels and store as new CSV file """
         self.createProblem()
         self.generateRandomX()
         self.computeLabels()
         if plotData:
-            self.storeDfInCsvFile()
-        self.plotNewData(title="New data")
+            self.plotNewData(title=f"Newly generated data (generator mode is '{self.mode}')")
+        self.storeDfInCsvFile()
 
 

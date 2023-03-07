@@ -18,12 +18,12 @@ class DataHandler:
         self.df = None                  # initial data
         self.train_df = None            # train split
         self.test_df = None             # test split
-        self.X_train = None
-        self.y_train = None
-        self.X_test = None
-        self.y_test = None
-        self.pred_df = None             # Dataframe with column name "y_pred"
-        self.predXtest_df = None        # Dataframe with X_test and y_pred
+        self.X_train = None             # 80% of df, only columns x1, x2, ...
+        self.y_train = None             # 80% of df, only column y (true)
+        self.X_test = None              # 20% of df, only columns x1, x2, ...
+        self.y_test = None              # 20% of df, only column y (true)
+        self.y_pred_df = None           # Predicted labels - Dataframe with column name "y_pred"
+        self.predXtest_df = None        # Dataframe with X_test and y_pred_df
 
 
 
@@ -87,19 +87,18 @@ class DataHandler:
 
     def readDataFromCsvToDf(self, filename=None, filepath=None, verbose=False):
         """ Read in data training data from csv-file and save it as dataframe in variable. """
-        print("filename", filename)
-        print("filepath", filepath)
+        if verbose:
+            print("filename:", filename)
+            print("filepath:", filepath)
+
         if filepath is not None and filename is not None:
             raise ValueError("Error: Either provide filename or whole filepath as argument.")
-
         elif filepath is not None and filename is None:
             pass
-
         elif filepath is None and filename is not None:
             filepath = os.path.join("..", filename)
-
         else: # filepath is None and filename is None: # just default config
-            filepath = cfg.TRAIN_DATA
+            filepath = cfg.TRAIN_DATA_NAME
 
         # get data
         self.df = pd.read_csv(filepath, sep=';', header=1)
@@ -107,7 +106,7 @@ class DataHandler:
         with open(filepath, "r", newline='\n') as f:
             reader = csv.reader(f)
             problem_name = next(reader)[0]
-        print("Found data for problem:", problem_name)
+        print("\nFound data for problem:", problem_name)
         if verbose:
             print("csv filepath:", filepath)
             print(self.df)

@@ -26,7 +26,7 @@ def main(n=N, seed=SEED, problem_name=PROBLEM, algorithm=ALGORITHM, deleteOldDat
                               deleteOldData=deleteOldData)
 
     ### Generate random X data, compute labels and store as new CSV file ###
-    inputData.kickStartCsvFileGeneration(plotData=True)
+    inputData.generateCsvFileWithNewInputX(plotData=True)
 
     """    
     ### Define Problem ###

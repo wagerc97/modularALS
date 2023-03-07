@@ -208,10 +208,10 @@ class MachineLearningModel(DataHandler):
         print("\nResults were saved to file:", filepath)
 
 
-
     def getTestScore(self, X_test=None, y_test=None):
         """
-        Get the prediction score of the best estimator on the TEST dataset.
+        Get the prediction score (R²) of the best estimator on the TEST dataset.
+        Also compute and store the test score in the object, if it was not already done.
         Input of X_test, y_test is optional. Default is saved in class already.
         """
         if self.testScore is None:
@@ -220,6 +220,8 @@ class MachineLearningModel(DataHandler):
             if y_test is None:
                 y_test = self.y_test
             bestModel_testScore = self.bestEstimator.score(X_test, y_test)
+            self.testScore = bestModel_testScore
+            #bestModel_testScore = r2_score(y_true=y_test, y_pred=self.y_pred_df)
             return round(bestModel_testScore, 3)
         else:
             return round(self.testScore, 3)
@@ -250,22 +252,18 @@ class MachineLearningModel(DataHandler):
 
         # Predict on dataset
         y_pred = self.grid_search_cv.best_estimator_.predict(X_test)
-        #print("\n\n----------------\n")
-        #print(y_pred)
         if self.normalize:
             scaler = self.scaler_X
             y_pred = pd.DataFrame(scaler.inverse_transform(y_pred), columns=['y'])  # transform back
-        #print("\n\n----------------\n")
-        #print(y_pred)
-        self.pred_df = pd.DataFrame(y_pred, columns=["y_pred"])
+        self.y_pred_df = pd.DataFrame(y_pred, columns=["y_pred"])
 
         # Save combined dataframe for later plotting
         X_test_copy = self.X_test.copy().reset_index(drop=True)  # reset index of this copy only which was shuffled for model training
-        self.predXtest_df = X_test_copy.assign(y=self.pred_df)
+        self.predXtest_df = X_test_copy.assign(y=self.y_pred_df)
 
         if verbose:
-            print("y_pred:\n", self.pred_df)
-        return self.pred_df, self.predXtest_df
+            print("y_pred_df:\n", self.y_pred_df)
+        return self.y_pred_df, self.predXtest_df
 
 
     def saveModelToFile(self, filepath=myconfig.MODEL_FILE):
