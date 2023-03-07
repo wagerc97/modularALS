@@ -3,6 +3,7 @@
 myconfig.py holds project config 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import os
+
 PROJECT_PATH = os.path.abspath(__file__).split("myconfig.py")[0]
 
 def testiamhere():
@@ -23,11 +24,11 @@ PRED_DATA = "pred.csv"
 PRED_DATA_FILE = os.path.join(PROJECT_PATH, "data", PRED_DATA)
 
 # Storing model
-MODEL_DIR = os.path.join(PROJECT_PATH, "ML_modular", "models")
 MODEL_FILE_NAME = "final_model.sav"
+MODEL_DIR = os.path.join(PROJECT_PATH, "ML_modular", "models")
 MODEL_FILE = os.path.join(PROJECT_PATH, "ML_modular", "models", MODEL_FILE_NAME)
 
 # Temporary table
-TMP_TABLE_DIR = os.path.join(PROJECT_PATH, "ML_modular", "tables")
 TMP_TABLE_FILE_NAME = "tmp_result_table.csv"
+TMP_TABLE_DIR = os.path.join(PROJECT_PATH, "ML_modular", "tables")
 TMP_TABLE_FILE = os.path.join(PROJECT_PATH, "ML_modular", "tables", TMP_TABLE_FILE_NAME)

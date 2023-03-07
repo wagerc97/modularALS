@@ -70,6 +70,7 @@ def main():
     myModel.defineParamGrid(PARAM_DICT)
 
     ### Train model pipeline in Gridsearch with CV ###
+    # verbose will print results-table
     myModel.applyGridSearchCV(verbose=True)
 
     ### Get best model ###

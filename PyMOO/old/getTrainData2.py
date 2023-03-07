@@ -3,7 +3,7 @@
 Compute and store X-Y value pairs from different problems. 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import pymoo_helpers as helper
-from freshData import FreshData
+from dataGenerator import DataGenerator
 
 # Chose a problem
 # - SOO: Rosenbrock (x1, x2, y)      (n_var: 2, n_obj: 1, n_constr: 0) -> solution is one single point
@@ -19,11 +19,11 @@ def main(n=N, seed=SEED, problem_name=PROBLEM, algorithm=ALGORITHM, deleteOldDat
 
 
     ### Invoke a new instance of fresh data ###
-    inputData = FreshData(n=n,
-                          seed=seed,
-                          problem_name=problem_name,
-                          algorithm_name=algorithm,
-                          deleteOldData=deleteOldData)
+    inputData = DataGenerator(n=n,
+                              seed=seed,
+                              problem_name=problem_name,
+                              algorithm_name=algorithm,
+                              deleteOldData=deleteOldData)
 
     ### Generate random X data, compute labels and store as new CSV file ###
     inputData.kickStartCsvFileGeneration(plotData=True)
