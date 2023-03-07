@@ -11,8 +11,9 @@ from sklearn.preprocessing import StandardScaler
 
 
 class DataHandler:
-    def __init__(self, **kwargs):
+    def __init__(self, seed=42, **kwargs):
         """ A class to handle data for ml model """
+        self.split_seed = seed
         # Data storage
         self.df = None                  # initial data
         self.train_df = None            # train split
@@ -23,6 +24,7 @@ class DataHandler:
         self.y_test = None
         self.pred_df = None             # Dataframe with column name "y_pred"
         self.predXtest_df = None        # Dataframe with X_test and y_pred
+
 
 
     def setDataframe(self, df):
@@ -38,20 +40,23 @@ class DataHandler:
         self.defineDataSplits(self.df)
 
 
-    def kickStartFromFile(self, filename=None, filepath=cfg.DATA_FILE, verbose=False):
-        """ Read in data from file and define test- and trainsplits """
+    def readAndSplitFromFile(self, filename=None, filepath=None, verbose=False):
+        """ Read in data from file and define test- and train-splits """
         # get data from CSV file
-        _ = self.readDataFromCsvToDf(filename, filepath, verbose)
+        problem_name = self.readDataFromCsvToDf(filename, filepath, verbose)
 
         # Define data splits (train and test)
         self.defineDataSplits(self.df)
 
 
-    def defineDataSplits(self, param_df, random_seed=42):
+    def defineDataSplits(self, param_df, random_seed=None):
         """
-        Provide raw data saved in original df to Class.
         Split data into X_train, y_train, X_test, y_test (80/20 split)
+        Raw data was first provided and is saved in original df in this Class object.
         """
+        if random_seed is None:
+            random_seed = self.split_seed
+
         self.df = param_df.copy()
         # Data split
         data_train, data_test = train_test_split(self.df, test_size=0.2, random_state=random_seed)
@@ -81,14 +86,19 @@ class DataHandler:
 
     def readDataFromCsvToDf(self, filename=None, filepath=None, verbose=False):
         """ Read in data training data from csv-file and save it as dataframe in variable. """
-        if filepath is None and filename is None: # just default config
-            filepath = cfg.DATA_FILE_NAME
-
-        if filepath is None and filename is not None:
-            filepath = os.path.join("..", filename)
-
+        print("filename", filename)
+        print("filepath", filepath)
         if filepath is not None and filename is not None:
             raise ValueError("Error: Either provide filename or whole filepath as argument.")
+
+        elif filepath is not None and filename is None:
+            pass
+
+        elif filepath is None and filename is not None:
+            filepath = os.path.join("..", filename)
+
+        else: # filepath is None and filename is None: # just default config
+            filepath = cfg.TRAIN_DATA
 
         # get data
         self.df = pd.read_csv(filepath, sep=';', header=1)

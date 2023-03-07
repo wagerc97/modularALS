@@ -256,19 +256,19 @@ def storeDfInCsvFile(df, problem, deleteOldData):
     os.makedirs(myconfig.DATA_DIR, exist_ok=True)  # Make sure the directory exists
     # delete old train data file if True
     if deleteOldData:
-        os.remove(myconfig.DATA_FILE)
+        os.remove(myconfig.TRAIN_DATA_FILE)
     # write df to new csv file and delete old content
-    df.to_csv(myconfig.DATA_FILE, encoding='utf-8',
+    df.to_csv(myconfig.TRAIN_DATA_FILE, encoding='utf-8',
               index=False,  # False: without index
               sep=";"  # custom seperator
               )
     # add problem name in first line
-    with open(myconfig.DATA_FILE, "r+") as f:
+    with open(myconfig.TRAIN_DATA_FILE, "r+") as f:
         file_data = f.read()
         f.seek(0,0)     # get the first line
         f.write(str(problem.name()) + '\n' + file_data)
 
-    print(f"Successfully stored {problem.name()}-data to location:", myconfig.DATA_FILE)
+    print(f"Successfully stored {problem.name()}-data to location:", myconfig.TRAIN_DATA_FILE)
     return None
 
 

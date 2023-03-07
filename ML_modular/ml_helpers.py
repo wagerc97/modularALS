@@ -93,7 +93,7 @@ def plot1D(X, y, saveFileWithName=None):
 
 ########################################################################################################################
 
-def readDataFromCsvToDf(filepath=myconfig.DATA_FILE, verbose=False):
+def readDataFromCsvToDf(filepath=myconfig.TRAIN_DATA_FILE, verbose=False):
     """ Read in data training data from csv-file and save it in dataframe. """
     # get data
     data = pd.read_csv(filepath, sep=';', header=1)

@@ -3,7 +3,6 @@
 myconfig.py holds project config 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import os
-
 PROJECT_PATH = os.path.abspath(__file__).split("myconfig.py")[0]
 
 def testiamhere():
@@ -14,10 +13,14 @@ def testiamhere():
     print("+" * 30, "\n")
 
 
-# Training data
+### The data directory ###
 DATA_DIR = os.path.join(PROJECT_PATH, "data")
-DATA_FILE_NAME = "data.csv"
-DATA_FILE = os.path.join(PROJECT_PATH, "data", DATA_FILE_NAME)
+# Training data (to train model with)
+TRAIN_DATA = "train.csv"
+TRAIN_DATA_FILE = os.path.join(PROJECT_PATH, "data", TRAIN_DATA)
+# Test data (to predict on)
+PRED_DATA = "pred.csv"
+PRED_DATA_FILE = os.path.join(PROJECT_PATH, "data", PRED_DATA)
 
 # Storing model
 MODEL_DIR = os.path.join(PROJECT_PATH, "ML_modular", "models")

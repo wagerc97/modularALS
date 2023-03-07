@@ -6,22 +6,22 @@ Predict with saved ML model
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import ml_helpers as helper
 from data.dataHandler import DataHandler
-
+import myconfig as cfg
 
 def main():
 
     ### invoke a new instance of DataHandler ###
-    dataHandler = DataHandler()
+    predData = DataHandler()
 
     ### provide data from csv file ###
-    dataHandler.kickStartFromFile()
+    predData.readAndSplitFromFile(cfg.PRED_DATA_FILE)
 
     ### Load model from file ###
     loadedModel = helper.loadModelFromFile()
     print("Loaded model:\n", loadedModel)
 
     #testScore = helper.getTestScore(loadedModel, X_test, y_test)
-    testScore = loadedModel.score(dataHandler.X_test, dataHandler.y_test)
+    testScore = loadedModel.score(predData.X_test, predData.y_test)
     print("Model test score: ", round(testScore, 3))
 
 
