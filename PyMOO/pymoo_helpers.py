@@ -84,7 +84,7 @@ def createAlgorithm(algo):
 
 def solver(problem, algorithm, iterations, verbose=False):
     """
-    Create and solve a problem with a chosen algorithm
+    Solve a problem with a chosen algorithm.
     :param problem: input problem
     :param algorithm: input algorithm
     :param iterations: number of steps towards optimal solution
@@ -103,13 +103,13 @@ def solver(problem, algorithm, iterations, verbose=False):
 
 def summary(problem, res):
     """ Pretty print information about the solution of the result """
-    NUM_SIGN = 80
-    print("\n" + "-" * 31 + "[ RESULT SUMMARY ]" + "-" * 31)
+    NUM_SIGN = 78
+    print("\n" + "-" * 30 + "[ RESULT SUMMARY ]" + "-" * 30)
 
     print(f"Elapsed time:\t{round(res.exec_time, 2)} seconds")
     print(f"Algorithm:\t\t{res.algorithm}")
     print(f"Problem:\t\t{problem.name()}")
-    print(f"Result:\t\t{res}")
+    print(f"Result:\t\t\t{res}")
     print("")
 
     printResult = False
