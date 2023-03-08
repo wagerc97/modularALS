@@ -2,3 +2,4 @@
 /dump/
 /venv
 /venv/*
+/venv/**
