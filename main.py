@@ -19,7 +19,7 @@ if __name__ == '__main__':
     print("\n\n=====================================================================\n")
     print(">>> Generate new train data <<<\n")
     from PyMOO.dataGenerator import DataGenerator
-    inputDataGenerator = DataGenerator(mode="train",
+    trainDataGenerator = DataGenerator(mode="train",
                                        n=N,
                                        seed=SEED,
                                        problem_name=PROBLEM,
@@ -27,7 +27,7 @@ if __name__ == '__main__':
                                        overwrite=overWriteOldCsvData)
 
     ### Generate random X data, compute labels and store as new CSV file ###
-    inputDataGenerator.generateCsvFileWithNewInputX(plotData=True)
+    trainDataGenerator.generateCsvFileWithNewInputX(plotData=True)
 
 
     ### Create, train, evaluate and store ml model ###

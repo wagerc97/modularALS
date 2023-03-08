@@ -5,7 +5,7 @@ Predict with saved ML model
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import ml_helpers as helper
-from data.dataHandler import DataHandler
+from Data.dataHandler import DataHandler
 from sklearn.metrics import r2_score
 import myconfig as cfg
 

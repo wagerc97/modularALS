@@ -75,9 +75,8 @@ def createAlgorithm(algo):
     if algo.lower() == "nsga2" or "n":
         from pymoo.algorithms.moo.nsga2 import NSGA2
         algorithm = NSGA2(pop_size=100)  # pop_size defines the number of dots
-
     else:
-        raise Exception("Enter parameter { NSGA2 }")
+        raise Exception("Enter parameter { NSGA2 } ... i have not implemented any other algorithms yet")
 
     return algorithm
 

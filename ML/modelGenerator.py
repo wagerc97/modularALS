@@ -6,7 +6,6 @@ import os
 import joblib
 import numpy as np
 import pandas as pd
-import ml_helpers as helper
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import mean_squared_error
@@ -16,7 +15,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
-from data.dataHandler import DataHandler     # inherit the dataHandling class elements
+from Data.dataHandler import DataHandler     # inherit the dataHandling class elements
 import myconfig     # project specific configurations
 
 
