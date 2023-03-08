@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Compute and store X-Y value pairs from different problems. 
+
+Compute and save new data matrices from different problems of the form 
+[ x1 | x2 |...| y ] 
+Stored as CSV files. See myconfig for specific file location.
+File location is handled via default filepaths stored in myconfig.
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # import pymoo_helpers as helper
 import os
@@ -14,7 +19,7 @@ import myconfig
 
 
 class DataGenerator:
-    def __init__(self, mode, n=100, problem_name="Rosenbrock", seed=42, overwrite=True, algorithm_name='nsga2', **kwargs):
+    def __init__(self, mode, n=100, problem_name="Rosenbrock", seed=42, overwrite=True, **kwargs):
         """
         A class for generating, expanding and storing new data for training and prediction.
         # Chose a problem
@@ -29,8 +34,6 @@ class DataGenerator:
         self.overwrite = overwrite              # Boolean: if True overwrite old data csv file
         self.problem_name = problem_name        # name of problem given as parameter
         self.problem = None                     # Pymoo problem object
-        self.algorithm_name = algorithm_name    # nsga2 is default
-        self.algorithm = None                   # Pymoo algorithm object
         self.result = None                      # computed datapoints for result
         self.upper = None                       # upper boundary
         self.lower = None                       # lower boundary
@@ -39,11 +42,15 @@ class DataGenerator:
         self.df = None                          # combined dataframe [ X | y ]
 
         # Validation
-        self.validateMode(mode)           # set self.mode according to given mode parameter
+        self._validateMode(mode)                # set self.mode according to given mode parameter
+        self.setProblem()                       # initially sets a problem
 
 
-    def validateMode(self, param_mode, verbose=True):
-        """ Set self.mode according to given mode parameter """
+    def _validateMode(self, param_mode, verbose=True):
+        """
+        Set self.mode according to given mode parameter.
+        Can be changed later on
+        """
         if param_mode in ("t", "train", "training"):
             self.mode = myconfig._modeTRAIN
             self.csvFileName = myconfig.TRAIN_DATA_NAME
@@ -61,20 +68,7 @@ class DataGenerator:
             print("seed:", self.seed)
 
 
-    def showFitnessLandscape(self):
-        """
-        Show problem as landscape
-        Illustrate problem (only applicable if one single objective function)
-        """
-        # 3D Surface model
-        # Note: using n_samples to decrease the quality and allow turning 3D model on weak PC
-        FitnessLandscape(self.problem, angle=(45, 45), _type="surface", n_samples=40,
-                         title=f"FitnessLandscape of {self.problem.name()}").show()
-        # 2D Contour model
-        # FitnessLandscape(problem, _type="contour", colorbar=True).show()
-
-
-    def createProblem(self, plotProblem=False):
+    def setProblem(self, plotProblem=False):
         if self.problem_name.lower() in ("zakharov", "zdt1", "z"):
             from pymoo.problems.multi import ZDT1
             # https://pymoo.org/problems/single/zakharov.html
@@ -87,50 +81,10 @@ class DataGenerator:
                 self.showFitnessLandscape()
 
         else:
-            raise Exception("Enter one problem_name of { Zakharov, Rosenbrock }")
+            raise ValueError("Enter one problem_name of { Zakharov, Rosenbrock }")
         print(self.problem)
-
-
-    def createAlgorithm(self, algo=None):
-        """
-        Create an algorithm
-        :param algo: enter one { NSGA2 }
-        :return: the algorithm object
-        """
-        if algo is None:
-            algo = self.algorithm_name
-
-        if algo.lower() == "nsga2" or "n":
-            from pymoo.algorithms.moo.nsga2 import NSGA2
-            self.algorithm = NSGA2(pop_size=100)  # pop_size defines the number of dots
-        else:
-            raise Exception("Enter parameter { NSGA2 }")
-
-
-    def summary(self):
-        """ Pretty print information about the solution of the result """
-        if self.result is None:
-            raise ValueError("Error: You need to compute the problem result first")
-
-        else:
-            NUM_SIGN = 80
-            print("\n" + "-" * 31 + "[ RESULT SUMMARY ]" + "-" * 31)
-
-            print(f"Elapsed time:\t{round(self.result.exec_time, 2)} seconds")
-            print(f"Algorithm:\t\t{self.result.algorithm}")
-            print(f"Problem:\t\t{self.problem.name()}")
-            print(f"Result:\t\t{self.result}")
-            print("")
-        printResult = False
-        if printResult:
-            # Create DataFrames for decision variables and objectives and print them
-            X_df = pd.DataFrame(self.result.X, columns=[f"x{i + 1}" for i in range(self.problem.n_var)])
-            F_df = pd.DataFrame(self.result.F, columns=[f"f{i + 1}" for i in range(self.problem.n_obj)])
-            print("Decision variables:")
-            print(X_df)
-            print("\nObjectives:")
-            print(F_df)
-        print("-" * NUM_SIGN)
+        # Set boundary values according to problem
+        self.setBoundaries()
 
 
     def setBoundaries(self, verbose=False):
@@ -153,15 +107,53 @@ class DataGenerator:
             print("upper boundary:", self.upper)
 
 
+    def showFitnessLandscape(self):
+        """
+        Show problem as landscape
+        Illustrate problem (only applicable if one single objective function)
+        """
+        # 3D Surface model
+        # Note: using n_samples to decrease the quality and allow turning 3D model on weak PC
+        FitnessLandscape(self.problem, angle=(45, 45), _type="surface", n_samples=40,
+                         title=f"FitnessLandscape of {self.problem.name()}").show()
+        # 2D Contour model
+        # FitnessLandscape(problem, _type="contour", colorbar=True).show()
+
+
+    def summary(self, printResult=False):
+        """ Pretty print information about the solution of the result """
+        if self.result is None:
+            raise ValueError("Error: You need to compute the problem result first")
+
+        else:
+            NUM_SIGN = 80
+            print("\n" + "-" * 31 + "[ RESULT SUMMARY ]" + "-" * 31)
+
+            print(f"Elapsed time:\t{round(self.result.exec_time, 2)} seconds")
+            print(f"Algorithm:\t\t{self.result.algorithm}")
+            print(f"Problem:\t\t{self.problem.name()}")
+            print(f"Result:\t\t{self.result}")
+            print("")
+        try:
+            if printResult:
+                # Create DataFrames for decision variables and objectives and print them
+                X_df = pd.DataFrame(self.result.X, columns=[f"x{i + 1}" for i in range(self.problem.n_var)])
+                F_df = pd.DataFrame(self.result.F, columns=[f"f{i + 1}" for i in range(self.problem.n_obj)])
+                print("Decision variables:")
+                print(X_df)
+                print("\nObjectives:")
+                print(F_df)
+        except Exception as e:
+            print("Could not print results in dataGenerator.summary(). Here is why:\n", str(e))
+        print("-" * NUM_SIGN)
+
+
     def generateRandomX(self):
         """ Generate a dataframe with random numbers. """
-        self.setBoundaries()
-
         if self.problem is None:
             raise Exception("Error: Define problem first, then generate random data")
         else:
             n_cols = self.problem.n_var
-
         np.random.seed(self.seed)  # Set the random seed to 42
         df_dict = {}  # dataframe dictionary will store the columns temporarily
         for i in range(1, n_cols + 1):
@@ -170,7 +162,6 @@ class DataGenerator:
             x = np.random.uniform(low=self.lower, high=self.upper, size=self.n)
             # add new column to dataframe dictionary
             df_dict[f'x{i}'] = x
-
         self.X = pd.DataFrame(df_dict)  # convert dict to df
 
 
@@ -180,6 +171,7 @@ class DataGenerator:
         frames = [x_df, y]
         combined_df = pd.concat(frames, axis=1)
         self.df = combined_df
+
 
     def evaluate_df_row(self, x):
         """
@@ -248,8 +240,7 @@ class DataGenerator:
 
 
     def generateCsvFileWithNewInputX(self, plotData=False):
-        """ Generate random X data, compute labels and store as new CSV file """
-        self.createProblem()
+        """ KICKSTART: Generate random X data, compute labels and store as new CSV file """
         self.generateRandomX()
         self.computeLabels()
         if plotData:
