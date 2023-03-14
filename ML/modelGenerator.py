@@ -57,7 +57,7 @@ class ModelGenerator(DataHandler):
 
     def __del__(self):
         """ destructor frees up memory """
-        print(f"\nObject {self.__class__.__name__} destroyed")
+        print(f"---Object {self.__class__.__name__} destroyed")
 
 
     #TODO: different scorers for hyperparameter search and training

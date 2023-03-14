@@ -33,7 +33,7 @@ class DataHandler:
 
     def __del__(self):
         """ destructor frees up memory """
-        print(f"\nObject {self.__class__.__name__} destroyed")
+        print(f"---Object {self.__class__.__name__} destroyed")
 
 
     def setDataframe(self, df):
@@ -121,14 +121,14 @@ class DataHandler:
             print("filepath:", filepath)
 
         if filepath is not None and filename is not None:
-            raise ValueError("Error: You have to provide a filename or an absolute filepath.")
+            raise ValueError("You have to provide a filename or an absolute filepath.")
         elif filepath is not None and filename is None:
             pass
         elif filepath is None and filename is not None:
             filepath = os.path.join("..", filename)
         else: # filepath is None and filename is None: # just default config
             #filepath = cfg.TRAIN_DATA_NAME
-            raise ValueError("Error: You have to provide a filename or an absolute filepath.")
+            raise ValueError("You have to provide a filename or an absolute filepath.")
 
         # get data
         self.df = pd.read_csv(filepath, sep=';', header=1)

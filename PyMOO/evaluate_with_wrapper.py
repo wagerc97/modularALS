@@ -4,7 +4,7 @@
 test the problem wrapper
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-from problemWrapper import ProblemWrappedModel
+from problemWrapper import ProblemWrapper
 import myconfig as cfg
 import numpy as np
 from pymoo.problems.functional import FunctionalProblem
@@ -33,8 +33,11 @@ def main():
     print(f"inputX shape = {inputX.shape} \n{inputX if (inputX.shape[0] * inputX.shape[1]) < 25 else 'dimensions too high to print' }")
     print("-"*30, "\n")
 
-    # Using the same problem for problem wrapper arguments as in DataGenerator
 
+
+    ### PROBLEM ###
+
+    # Using the same problem for problem wrapper arguments as in DataGenerator
     problem = datGen.getProblem()
     n_var, n_obj, n_ieq_constr, xl, xu = datGen.getProblemParameters()
 
@@ -42,19 +45,8 @@ def main():
     #for arg in n_var, n_obj, n_ieq_constr, xl, xu:
     #    print(arg)
 
-    ### PROBLEM ###
 
-    """
-    n_var = 2
-    problemWrapper = ProblemWrappedModel(
-        n_var=n_var,  # hardcoded, but problem dependent
-        n_obj=1,  # hardcoded, but problem dependent
-        # n_ieq_constr=len(constr_ieq),
-        n_ieq_constr=1,
-        xl=-2, xu=2  # hardcoded, but problem dependent
-    )
-    """
-    problemWrapper = ProblemWrappedModel(
+    problemWrapper = ProblemWrapper(
         n_var=n_var,                    # hardcoded, but problem dependent
         n_obj=n_obj,                    # hardcoded, but problem dependent
         n_ieq_constr=n_ieq_constr+1,    # todo: was ist n_ieq_constr??
@@ -69,19 +61,19 @@ def main():
     # Compute labels i.e. evaluate ml model wrapped in pymoo problem at random inputX positions
     problemWrapper.computeLabels(X=inputX)
     result = problemWrapper.getResult()
-
     #print("result", result)
 
 #####################################################################################################
 
+    # Compute analytical solution = labels
     datGen.computeLabels()
     #labels = datGen.get_y()
     labels = datGen.getLabels()
-
     #print("\nlabels:", labels)
 
 #####################################################################################################
 
+    # Combine the two dataframes to compare the nicely
     combined_df = helper.concatenateDataframes(result, labels)
     print("Final result:\n", combined_df)
 

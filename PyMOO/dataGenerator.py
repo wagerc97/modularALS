@@ -50,7 +50,7 @@ class DataGenerator:
 
     def __del__(self):
         """ destructor frees up memory """
-        print(f"\nObject {self.__class__.__name__} destroyed")
+        print(f"---Object {self.__class__.__name__} destroyed")
 
 
     def _validateMode(self, param_mode, verbose=True):
@@ -140,7 +140,7 @@ class DataGenerator:
     def summary(self, printResult=False):
         """ Pretty print information about the solution of the result """
         if self.result is None:
-            raise ValueError("Error: You need to compute the problem result first")
+            raise ValueError("You need to compute the problem result first")
 
         else:
             NUM_SIGN = 80
@@ -184,7 +184,7 @@ class DataGenerator:
 
     def get_X(self):
         if self.X is None:
-            raise ValueError("Error: First you have to define X data using f.e. generateRandomX()")
+            raise ValueError("First you have to define X data using f.e. generateRandomX()")
         return self.X
 
 
@@ -214,7 +214,7 @@ class DataGenerator:
 
     def get_y(self):
         if self.y is None:
-            raise ValueError("Error: First you have to define y data using f.e. computeLabels()")
+            raise ValueError("First you have to define y data using f.e. computeLabels()")
         return self.y
 
 

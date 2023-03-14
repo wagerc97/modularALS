@@ -20,7 +20,7 @@ warnings.simplefilter(action='ignore', category=UserWarning)
 
 # Link: https://pymoo.org/problems/definition.html#nb-problem-definition-functional
 
-class ProblemWrappedModel(Problem):
+class ProblemWrapper(Problem):
     """ Wraps the ML model in a PyMOO Problem class """
 
     def __init__(self, n_var=None, n_obj=None, n_ieq_constr=None, xl=None, xu=None):
@@ -38,7 +38,7 @@ class ProblemWrappedModel(Problem):
 
     def __del__(self):
         """ destructor frees up memory """
-        print(f"\nObject {self.__class__.__name__} destroyed")
+        print(f"---Object {self.__class__.__name__} destroyed")
 
 
 
@@ -84,7 +84,7 @@ class ProblemWrappedModel(Problem):
 
     def getResult(self):
         if self.result is None:
-            raise ValueError(f"Error: Instance of {self.__class__.__name__} has no result yet. Please compute result first using computeLabels()")
+            raise ValueError(f"Instance of {self.__class__.__name__} has no result yet. Please compute result first using computeLabels()")
         return self.result
 
 
