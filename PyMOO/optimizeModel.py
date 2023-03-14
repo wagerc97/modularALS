@@ -6,7 +6,7 @@ Wrapper to optimize a given ML model.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import pymoo_helpers as helper
 from optimizer import Optimizer
-from problemWrappedModel import ProblemWrappedModel
+from problemWrapper import ProblemWrappedModel
 from sklearn.metrics import r2_score
 import myconfig as cfg
 

@@ -4,7 +4,7 @@
 test the problem wrapper
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-from problemWrappedModel import ProblemWrappedModel
+from problemWrapper import ProblemWrappedModel
 import myconfig as cfg
 import numpy as np
 from pymoo.problems.functional import FunctionalProblem
