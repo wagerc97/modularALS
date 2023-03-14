@@ -18,6 +18,9 @@ from sklearn.model_selection import cross_val_score
 from Data.dataHandler import DataHandler     # inherit the dataHandling class elements
 import myconfig     # project specific configurations
 
+# Ignore FutureWarnings
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 class ModelGenerator(DataHandler):
     def __init__(self, **kwargs):
@@ -176,6 +179,7 @@ class ModelGenerator(DataHandler):
         # round results
         ptable = ptable.round(decimals=2)
         # replace words in header with regex
+        # HERE we will ignore the FutureWarning
         ptable.columns = ptable.columns.str.replace(rf"(param_|{self.prefix})", "")
         self.tr_df_slim = ptable
 
