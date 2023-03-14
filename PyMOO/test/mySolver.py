@@ -27,6 +27,13 @@ if __name__ == '__main__':
     # Start the solver
     problem, res = helper.solver(problem, algorithm, iterations=50)
 
+    # print result
+    result_stuff = [res.X, res.F, res.G, res.CV]
+    print("Solution:")
+    for r in result_stuff:
+        print(r)
+
+
     # Pretty print the solution
     helper.summary(problem, res)
 

@@ -51,9 +51,18 @@ def main():
     # Provide problem for Optimizer
     myOptimizer.setProblem(myProblem)
 
+    # Reduce algo iterations
+    myOptimizer.setIterations( 500 )
+
     # Solve for optimal solution
     myOptimizer.solve(verbose=True)
 
+    # Print solution
+    res = myOptimizer.getSolution()
+    result_stuff = [res.X, res.F, res.G, res.CV]
+    print("Solution:")
+    for r in result_stuff:
+        print(r)
 
 
 if __name__ == '__main__':

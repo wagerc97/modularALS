@@ -51,7 +51,7 @@ class Optimizer:
 
         if param_algo.lower() == "nsga2" or "n":
             # use algorithm specific default if no pop size was defined by user
-            n_pop = 100 if self.pop_size is None else self.pop_size
+            n_pop = 1 if self.pop_size is None else self.pop_size
             self.algorithm = NSGA2(pop_size=n_pop)
         else:
             raise Exception("Enter parameter { NSGA2 } ... i have not implemented any other algorithms yet")
@@ -83,3 +83,6 @@ class Optimizer:
                                  seed=self.seed,
                                  verbose=verbose             # prints out solution in each iteration
                                  )
+
+    def getSolution(self):
+        return self.solution
