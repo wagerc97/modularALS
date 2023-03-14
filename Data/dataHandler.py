@@ -8,23 +8,27 @@ import pandas as pd
 import myconfig as cfg     # project specific configurations
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.utils import shuffle
 
 
 class DataHandler:
     def __init__(self, seed=42, **kwargs):
         """ A class to handle data for ml model """
         self.split_seed = seed
-        # Data storage
+        # For model training
         self.df = None                  # initial data
         self.train_df = None            # train split
         self.test_df = None             # test split
         self.X_train = None             # 80% of df, only columns x1, x2, ...
-        self.y_train = None             # 80% of df, only column y (true)
+        self.y_train = None             # 80% of df, only column y (labels)
         self.X_test = None              # 20% of df, only columns x1, x2, ...
-        self.y_test = None              # 20% of df, only column y (true)
+        self.y_test = None              # 20% of df, only column y (labels)
         self.y_pred_df = None           # Predicted labels - Dataframe with column name "y_pred"
         self.predXtest_df = None        # Dataframe with X_test and y_pred_df
 
+        # for unseen data -> prediction
+        self.X_df = None
+        self.y_df = None
 
 
     def setDataframe(self, df):
@@ -37,19 +41,38 @@ class DataHandler:
         if self.df is None:
             self.df = df
         # Define data splits (train and test)
-        self.defineDataSplits(self.df)
+        self.splitDataForModelGeneration(self.df)
 
 
-    def readAndSplitFromFile(self, filename=None, filepath=None, verbose=False):
-        """ Read in data from file and define test- and train-splits """
-        # get data from CSV file
-        problem_name = self.readDataFromCsvToDf(filename, filepath, verbose)
+    def splitDataForPrediction(self, param_df=None, random_seed=None):
+        """
+        Split data into train and test dataframe.
+        Raw data was first provided and is saved in original df in this Class object.
+        :param param_df:
+        :param random_seed:
+        :return: randomized X and y splits dataframe of provided data
+        """
+        if param_df is None:
+            param_df = self.df
+        if random_seed is None:
+            random_seed = self.split_seed
 
-        # Define data splits (train and test)
-        self.defineDataSplits(self.df)
+        # Save parameter dataframe and avoid manipulating it
+        self.df = param_df
+        df = self.df.copy()
+
+        # Split Data: randomize rows
+        df = shuffle(df)
+
+        # Split X and y
+        #   assign X all columns except label "y"
+        #   assign y the "y" column
+        self.X_df, self.y_df = df.drop(["y"], axis=1), df.y
+
+        return self.X_df, self.y_df
 
 
-    def defineDataSplits(self, param_df, random_seed=None):
+    def splitDataForModelGeneration(self, param_df, random_seed=None):
         """
         Split data into X_train, y_train, X_test, y_test (80/20 split)
         Raw data was first provided and is saved in original df in this Class object.
@@ -57,15 +80,20 @@ class DataHandler:
         if random_seed is None:
             random_seed = self.split_seed
 
-        self.df = param_df.copy()
-        # Data split
-        data_train, data_test = train_test_split(self.df, test_size=0.2, random_state=random_seed)
+        # Save parameter dataframe and avoid manipulating it
+        self.df = param_df
+        df = self.df.copy()
 
-        # assign X all columns except "y" (which we want to predict)
-        # assign y the "y" column
+        # Split data 80/20, shuffle rows
+        data_train, data_test = train_test_split(df, test_size=0.2, random_state=random_seed)
+
+        # Split X and y
+        #   assign X all columns except label "y"
+        #   assign y the "y" column
         X_train, y_train = data_train.drop(["y"], axis=1), data_train.y
         X_test, y_test = data_test.drop(["y"], axis=1), data_test.y
 
+        # Save splits in data handler
         self.X_train = X_train
         self.y_train = y_train
         self.X_test = X_test
@@ -73,11 +101,7 @@ class DataHandler:
 
         # Save train and test df (nice column names)
         self.train_df = self.X_train.assign(y=self.y_train)
-        #print("\n\n----------------\n")
-        #print(self.train_df)
         self.test_df = self.X_test.assign(y=self.y_test)
-        #print("\n\n----------------\n")
-        #print(self.test_df)
 
 
     def getDataSplits(self):
@@ -92,13 +116,14 @@ class DataHandler:
             print("filepath:", filepath)
 
         if filepath is not None and filename is not None:
-            raise ValueError("Error: Either provide filename or whole filepath as argument.")
+            raise ValueError("Error: You have to provide a filename or an absolute filepath.")
         elif filepath is not None and filename is None:
             pass
         elif filepath is None and filename is not None:
             filepath = os.path.join("..", filename)
         else: # filepath is None and filename is None: # just default config
-            filepath = cfg.TRAIN_DATA_NAME
+            #filepath = cfg.TRAIN_DATA_NAME
+            raise ValueError("Error: You have to provide a filename or an absolute filepath.")
 
         # get data
         self.df = pd.read_csv(filepath, sep=';', header=1)

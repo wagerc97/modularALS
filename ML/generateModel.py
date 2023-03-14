@@ -32,7 +32,7 @@ def main():
     print(myModel)
 
     ### split data into train and test set ###
-    myModel.defineDataSplits(df)
+    myModel.splitDataForModelGeneration(df)
     X_train, y_train, _, _, train_df, _ = myModel.getDataSplits()
     #print("\nX_train.head():\n", X_train.head())
     #print("\ny_train.head():\n", y_train.head())

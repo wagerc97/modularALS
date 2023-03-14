@@ -77,7 +77,7 @@ class Optimizer:
         self.solution = minimize(
             problem=self.pipeline.predict(),
             algorithm=self.algorithm,
-            seed=self.seed,
             ('n_gen', iters),   # n_gen defines the number of iterations
+            seed=self.seed,
             verbose=verbose     # prints out solution in each iteration
             )

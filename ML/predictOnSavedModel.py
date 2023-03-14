@@ -15,8 +15,13 @@ def main():
     predictionInputData = DataHandler()
 
     ### provide data from csv file ###
-    predictionInputData.readAndSplitFromFile(cfg.PRED_DATA_FILE)
     #todo: remove split for prediction
+    predictionInputData.readDataFromCsvToDf(cfg.PRED_DATA_FILE)
+    X_df, y_df = predictionInputData.splitDataForPrediction()
+
+    # check dimension of splits
+    print(f"\nX dimension: {X_df.shape} \n{X_df.head()}")
+    print(f"\ny dimension: {y_df.shape} \n{y_df.head()}")
 
     ### Load model from file ###
     loadedModel = helper.loadModelFromFile()
@@ -24,8 +29,8 @@ def main():
 
     #testScore = helper.getTestScore(loadedModel, X_test, y_test)
     #testScore = loadedModel.score(predData.X_test, predData.y_test)
-    pred_y = loadedModel.predict(predictionInputData.X_test)
-    testScore = r2_score(y_true=predictionInputData.y_test, y_pred=pred_y)
+    pred_y = loadedModel.predict(X_df)
+    testScore = r2_score(y_true=y_df, y_pred=pred_y)
     print("Model test score (R²): ", round(testScore, 3))
 
 
