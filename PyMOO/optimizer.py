@@ -33,16 +33,12 @@ class Optimizer:
         self.iters = 100                        # number of iterations in minimization
         self.solution = None                    # optimized solution
 
-
-    def fetchPipelineFromFile(self, filepath=myconfig.MODEL_FILE):
-        """ Load the model from disk with provided path. """
-        print("\nLoad model from file:", filepath)
-        self.pipeline = joblib.load(filepath)
+        print(f"New {self.__class__.__name__} object created ")
 
 
-    def setPipelineObject(self, pipeline_object):
-        """ Provide pipeline object as input parameter and save it on class. """
-        self.pipeline = pipeline_object
+    def __del__(self):
+        """ destructor frees up memory """
+        print(f"\nObject {self.__class__.__name__} destroyed")
 
 
     def setAlgorithm(self, param_algo=None):

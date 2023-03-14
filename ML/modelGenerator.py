@@ -44,6 +44,7 @@ class ModelGenerator(DataHandler):
         self.train_result_df = None     # ordered train results
         self.tr_df_slim = None          # TestResult_DataFrame: Only interesting columns, first 5 rows, rounded to 2 decimals
 
+        print(f"New {self.__class__.__name__} object created ")
 
 
     def __str__(self):
@@ -52,6 +53,11 @@ class ModelGenerator(DataHandler):
             return f"{type(self.model_type).__name__} model with parameters {self.model_type.get_params()}"
         except:
             return f"Chosen model: {type(self.model_type).__name__}"
+
+
+    def __del__(self):
+        """ destructor frees up memory """
+        print(f"\nObject {self.__class__.__name__} destroyed")
 
 
     #TODO: different scorers for hyperparameter search and training
@@ -146,6 +152,7 @@ class ModelGenerator(DataHandler):
         # TRAIN: fit the newly established model with data
         print("\nStart training model:")
         self.grid_search_cv.fit(self.X_train, self.y_train)
+        #self.grid_search_cv.fit(self.X_train.values, self.y_train)  #TODO: is using the values from the df without feature names OK?
 
         # TEST: Cross-validation of gridsearch with TEST data
         self.gscv_test_scores = cross_val_score(self.grid_search_cv, self.X_test, self.y_test)

@@ -31,6 +31,11 @@ class DataHandler:
         self.y_df = None
 
 
+    def __del__(self):
+        """ destructor frees up memory """
+        print(f"\nObject {self.__class__.__name__} destroyed")
+
+
     def setDataframe(self, df):
         self.df = df
 

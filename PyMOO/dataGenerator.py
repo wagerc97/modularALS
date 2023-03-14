@@ -19,7 +19,7 @@ import myconfig
 
 
 class DataGenerator:
-    def __init__(self, mode, n=100, problem_name="Rosenbrock", seed=42, overwrite=True, **kwargs):
+    def __init__(self, mode=None, n=100, problem_name="Rosenbrock", seed=42, overwrite=True, **kwargs):
         """
         A class for generating, expanding and storing new data for training and prediction.
         # Chose a problem
@@ -45,6 +45,13 @@ class DataGenerator:
         self._validateMode(mode)                # set self.mode according to given mode parameter
         self.setProblem()                       # initially sets a problem
 
+        print(f"New {self.__class__.__name__} object with mode='{self.mode}' created ")
+
+
+    def __del__(self):
+        """ destructor frees up memory """
+        print(f"\nObject {self.__class__.__name__} destroyed")
+
 
     def _validateMode(self, param_mode, verbose=True):
         """
@@ -60,8 +67,10 @@ class DataGenerator:
             self.csvFileName = myconfig.PRED_DATA_NAME
             self.csvFilePath = myconfig.PRED_DATA_FILE
             self.seed += 1  # alter the random seed to generate new unseen data
+        elif self.mode is None or self.mode == "":
+            raise TypeError("TypeError: DataGenerator.__init__() missing 1 required positional argument: 'mode'!\nValid modes are {'train' or 'predict'}")
         else:
-            raise ValueError(f"DataGenerator received invalid mode: '{param_mode}'. Needs to be 'train' or 'predict'")
+            raise ValueError(f"DataGenerator received invalid mode: '{param_mode}'. Valid modes are ['train' or 'predict']")
         if verbose:
             print("csvFileName:", self.csvFileName)
             print("csvFilePath:", self.csvFilePath)
@@ -85,6 +94,14 @@ class DataGenerator:
         print(self.problem)
         # Set boundary values according to problem
         self.setBoundaries()
+
+
+    def getProblem(self):
+        return self.problem
+
+
+    def getProblemParameters(self):
+        return self.problem.n_var, self.problem.n_obj, self.problem.n_ieq_constr, self.lower, self.upper
 
 
     def setBoundaries(self, verbose=False):
@@ -165,6 +182,12 @@ class DataGenerator:
         self.X = pd.DataFrame(df_dict)  # convert dict to df
 
 
+    def get_X(self):
+        if self.X is None:
+            raise ValueError("Error: First you have to define X data using f.e. generateRandomX()")
+        return self.X
+
+
     def concatenateDataframes(self, x, y):
         """ Merge Dataframes and store in new dataframe to use with ml model """
         x_df = pd.DataFrame(x)
@@ -187,6 +210,16 @@ class DataGenerator:
         self.y = pd.DataFrame(results, columns=["y"])
         # Merge and store the two dataframes as one to use with ml model
         self.concatenateDataframes(self.X, self.y)
+
+
+    def get_y(self):
+        if self.y is None:
+            raise ValueError("Error: First you have to define y data using f.e. computeLabels()")
+        return self.y
+
+
+    def getLabels(self):
+        return self.get_y()
 
 
     def storeDfInCsvFile(self):

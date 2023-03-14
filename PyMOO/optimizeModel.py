@@ -6,6 +6,7 @@ Wrapper to optimize a given ML model.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 import pymoo_helpers as helper
 from optimizer import Optimizer
+from problemWrappedModel import ProblemWrappedModel
 from sklearn.metrics import r2_score
 import myconfig as cfg
 
@@ -17,9 +18,15 @@ def main():
     ### Define Algorithm for optimization ###
     myOptimizer.setAlgorithm('NSGA2')       # genetic algorithm
 
+    ### invoke a new instance of ProblemWrappedModel ###
+    myProblem = ProblemWrappedModel()
+
     ### Load model pipeline from file ###
-    loadedModel = myOptimizer.fetchPipelineFromFile()
+    #loadedModel = myOptimizer.fetchPipelineFromFile()
+    loadedModel = ProblemWrappedModel.fetchPipelineFromFile()
     print("Loaded model:\n", loadedModel)
+
+
 
     #testScore = helper.getTestScore(loadedModel, X_test, y_test)
     #testScore = loadedModel.score(predData.X_test, predData.y_test)
@@ -30,3 +37,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
