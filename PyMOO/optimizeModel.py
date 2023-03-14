@@ -64,6 +64,7 @@ def main():
     for r in result_stuff:
         print(r)
 
+    # Global Minimum at res.X=(1,1)
 
 if __name__ == '__main__':
     main()
