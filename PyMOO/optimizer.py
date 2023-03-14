@@ -33,9 +33,11 @@ class Optimizer:
         self.pop_size = None                    # population size in genetic algorithms
         self.iters = 100                        # number of iterations in minimization
         self.solution = None                    # optimized solution
+        self.attr_dict = None
 
         # Validation
         self.setAlgorithm()
+
         print(f"New {self.__class__.__name__} object created ")
 
 
@@ -72,10 +74,33 @@ class Optimizer:
         self.problem = problem
 
 
+    def _validateAttributesDictionary(self, verbose=True):
+        self.attr_dict = {
+            "n_gen": self.iters,
+            "pop_size": self.pop_size,
+            "seed": self.seed,
+            "n_var": self.problem.n_var,
+            "n_obj": self.problem.n_obj,
+            "n_ieq_constr": self.problem.n_ieq_constr,
+            "n_eq_constr": self.problem.n_eq_constr,
+            "xl": self.problem.xl,
+            "xu": self.problem.xu
+        }
+        if verbose:
+            num=20
+            print("\nStart solving with the following parameters:")
+            print("-"*num)
+            for key, val in self.attr_dict.items():
+                print(f"{key} = {val}")
+            print("-"*num, "\n")
+
+
     def solve(self, verbose=False):
         """ Solve the problem with a chosen algorithm. """
         if self.problem is None:
             raise ValueError("Provide a problem to optimizer")
+
+        self._validateAttributesDictionary()
 
         self.solution = minimize(problem=self.problem,
                                  algorithm=self.algorithm,   # n_gen defines the number of iterations

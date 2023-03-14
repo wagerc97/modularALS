@@ -38,6 +38,7 @@ def main():
     #print("\ny_train.head():\n", y_train.head())
 
     ### Plot Train data ###
+    pd.set_option('display.max_rows', 20)
     print("\nTrain df:\n", myModel.train_df)
     #helper.plotData(myModel.train_df, title="train data")
 
@@ -77,12 +78,14 @@ def main():
     myModel.applyGridSearchCV(verbose=True)
 
     ### Get best model ###
-    print(f"Best train score: {round(myModel.grid_search_cv.best_score_, 3)}") # Mean cross-validated score of the best_estimator during training
     print(f"Best parameters: {myModel.grid_search_cv.best_params_}") # Parameter setting that gave the best results on the hold out data.
+    print("Scorer:", myModel.scorer)
+    print(f"Best train score: {round(myModel.grid_search_cv.best_score_, 3)}") # Mean cross-validated score of the best_estimator during training
 
     ### Get TEST accuracy of best model ###
     print("All CV TEST score:", myModel.getAllCvTestScores()) #>  [-90.58918323 -39.71723522 -98.90899151 -52.99895814 -85.60559008]
     print("Mean CV TEST score:", myModel.getMeanTestScoreOfGridsearchCV()) #> mean: -73.564
+    print("\nScorer: R²-score")
     print("TEST score of best model:", myModel.getTestScore()) #> 0.997
 
     ### Plot prediction against train data ####

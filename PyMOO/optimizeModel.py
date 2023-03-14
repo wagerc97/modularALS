@@ -1,13 +1,11 @@
 #!/usr/bin/python3
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-Wrapper to optimize a given ML model.
+Optimize an ML model that is wrapped as pymoo problem object 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-import pymoo_helpers as helper
 from optimizer import Optimizer
 from problemWrapper import ProblemWrapper
-from sklearn.metrics import r2_score
 import myconfig as cfg
 
 def main():
@@ -32,14 +30,14 @@ def main():
     n_var = 2
     n_obj = 1
     n_ieq_constr = 0
-    n_eq_constr = 0
+    #n_eq_constr = 0
     xl = -2
     xu = 2
 
     myProblem = ProblemWrapper(
         n_var=n_var,  # hardcoded, but problem dependent
         n_obj=n_obj,  # hardcoded, but problem dependent
-        n_ieq_constr=n_ieq_constr + 1,  # todo: was ist n_ieq_constr??
+        n_ieq_constr=n_ieq_constr + 1,  #todo: hardcoded - was ist n_ieq_constr??
         xl=xl, xu=xu  # hardcoded, but problem dependent
     )
 
@@ -52,7 +50,13 @@ def main():
     myOptimizer.setProblem(myProblem)
 
     # Reduce algo iterations
-    myOptimizer.setIterations( 500 )
+    myOptimizer.setIterations( 5 )
+
+    # Set Population size for GA
+    myOptimizer.setPopulationSize( 2 )
+
+
+    ### OPTIMIZE ###
 
     # Solve for optimal solution
     myOptimizer.solve(verbose=True)

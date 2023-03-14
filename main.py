@@ -47,9 +47,16 @@ if __name__ == '__main__':
     predDataGenerator.generateCsvFileWithNewInputX(plotData=True)
 
 
-    ### Predict with saved model ###
+    ### Predict with saved ML model ###
     print("\n\n=====================================================================\n")
     print(">>> Predict on new data <<<\n")
     import ML.predictOnSavedModel as psml
     psml.main()
+
+
+    ### Compute optimal solution in saved ML model ###
+    print("\n\n=====================================================================\n")
+    print(">>> Optimize saved ML model <<<\n")
+    import PyMOO.optimizeModel as opml
+    opml.main()
 
